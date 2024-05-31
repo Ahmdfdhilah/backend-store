@@ -11,7 +11,7 @@ export class AuthService {
   private readonly logger = new Logger(AuthService.name);
   constructor(
     private jwtService: JwtService,
-    private userService: UserService
+    private userService: UserService,
   ) {}
 
   async validateUser({ username, password }: AuthPayloadDto): Promise<any> {
