@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 import { Order } from './order.entity';
-import { Product } from './product.entity';
+import { Product } from '../products-related/product.entity';
 import { Exclude } from 'class-transformer';
 
 @Entity('order_items')

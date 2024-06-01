@@ -1,21 +1,27 @@
-import { IsUUID, ValidateNested, IsInt} from 'class-validator';
-import { Type } from 'class-transformer';
-
-class UpdateOrderItemDto {
-  @IsUUID()
-  productId: string;
-
-  @IsInt()
-  quantity: number;
-}
+import { IsInt, IsUUID, ValidateNested } from "class-validator";
+import { CreateOrderItemDto, CreateOrderStatusDto, CreatePaymentsDto, CreateShippingDetailsDto } from "./create-order.dto";
+import { Type } from "class-transformer";
 
 export class UpdateOrderDto {
   @IsUUID()
-  userId?: string;
+  userId: string;
+
+  @IsInt()
+  total: number;
 
   @ValidateNested({ each: true })
-  @Type(() => UpdateOrderItemDto)
-  items: UpdateOrderItemDto[];
+  @Type(() => CreateOrderItemDto)
+  items: CreateOrderItemDto[];
 
-  status?: string;
+  @ValidateNested({ each: true })
+  @Type(() => CreateOrderStatusDto)
+  statusHistory: CreateOrderStatusDto[];
+
+  @ValidateNested({ each: true })
+  @Type(() => CreateShippingDetailsDto)
+  shippingDetails: CreateShippingDetailsDto[];
+
+  @ValidateNested({ each: true })
+  @Type(() => CreatePaymentsDto)
+  payments: CreatePaymentsDto[];
 }

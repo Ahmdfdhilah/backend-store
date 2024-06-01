@@ -7,15 +7,29 @@ import { UserModule } from './users/user.module';
 import { ProductModule } from './products/product.module';
 import { OrderModule } from './orders/order.module';
 import { CartModule } from './carts/cart.module';
-import { User } from './entities/user.entity';
-import { Product } from './entities/product.entity';
-import { Order } from './entities/order.entity';
+import { User } from './entities/users-related/user.entity';
+import { Product } from './entities/products-related/product.entity';
+import { Order } from './entities/orders-related/order.entity';
 import { Cart } from './entities/cart.entity';
 import { SeederModule } from './seeder/seeder.module';
 import { CartItem } from './entities/cart-item.entity';
-import { OrderItem } from './entities/order-item.entity';
+import { OrderItem } from './entities/orders-related/order-item.entity';
 import { SeederService } from './seeder/seeder.service';
 import { AuthModule } from './auth/auth.module';
+import { Address } from './entities/users-related/address.entity';
+import { Coupons } from './entities/coupon.entity';
+import { Discounts } from './entities/products-related/discounts.entity';
+import { OrderStatusHistory } from './entities/orders-related/order-status.entity';
+import { PaymentMethods } from './entities/orders-related/payment-methods.entity';
+import { Payments } from './entities/orders-related/payments.entity';
+import { ProductCategories } from './entities/products-related/product-categories.entity';
+import { ProductInventory } from './entities/products-related/product-inventory.entity';
+import { ProductReviews } from './entities/products-related/product-reviews.entity';
+import { ShippingDetails } from './entities/orders-related/shipping-details.entity';
+import { UserDetails } from './entities/users-related/user-details.entity';
+import { UserRoles } from './entities/users-related/user-roles.entity';
+import { PaymentMethodsModule } from './payment-methods/payment-methods.module';
+import { CategoryModule } from './product-categories/product-categories.module';
 
 @Module({
   imports: [
@@ -27,7 +41,7 @@ import { AuthModule } from './auth/auth.module';
       username: process.env.DB_USERNAME,
       database: process.env.DB_NAME,
       password: process.env.DB_PASSWORD,
-      entities: [User, Product, Order, OrderItem, Cart, CartItem],
+      entities: [User, Product, Order, OrderItem, Cart, CartItem, Address, Coupons, Discounts, OrderStatusHistory, PaymentMethods, Payments, ProductCategories, ProductInventory, ProductReviews, ShippingDetails, UserDetails, UserRoles ],
       synchronize: true,
     }),
     CacheModule.register({
@@ -35,12 +49,14 @@ import { AuthModule } from './auth/auth.module';
       store: redisStore,
       ttl: 300,
     }),
-    TypeOrmModule.forFeature([User, Product, Order, Cart, CartItem, OrderItem]),
+    TypeOrmModule.forFeature([User, Product, Order, OrderItem, Cart, CartItem, Address, Coupons, Discounts, OrderStatusHistory, PaymentMethods, Payments, ProductCategories, ProductInventory, ProductReviews, ShippingDetails, UserDetails, UserRoles]),
     SeederModule,
     UserModule,
     ProductModule,
     OrderModule,
     CartModule,
+    PaymentMethodsModule,
+    CategoryModule,
     AuthModule
   ],
   controllers: [],
