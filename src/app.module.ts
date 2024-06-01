@@ -27,9 +27,9 @@ import { ProductInventory } from './entities/products-related/product-inventory.
 import { ProductReviews } from './entities/products-related/product-reviews.entity';
 import { ShippingDetails } from './entities/orders-related/shipping-details.entity';
 import { UserDetails } from './entities/users-related/user-details.entity';
-import { UserRoles } from './entities/users-related/user-roles.entity';
 import { PaymentMethodsModule } from './payment-methods/payment-methods.module';
 import { CategoryModule } from './product-categories/product-categories.module';
+import { ProductReviewsModule } from './product-review/product-review.module';
 
 @Module({
   imports: [
@@ -41,7 +41,7 @@ import { CategoryModule } from './product-categories/product-categories.module';
       username: process.env.DB_USERNAME,
       database: process.env.DB_NAME,
       password: process.env.DB_PASSWORD,
-      entities: [User, Product, Order, OrderItem, Cart, CartItem, Address, Coupons, Discounts, OrderStatusHistory, PaymentMethods, Payments, ProductCategories, ProductInventory, ProductReviews, ShippingDetails, UserDetails, UserRoles ],
+      entities: [User, Product, Order, OrderItem, Cart, CartItem, Address, Coupons, Discounts, OrderStatusHistory, PaymentMethods, Payments, ProductCategories, ProductInventory, ProductReviews, ShippingDetails, UserDetails],
       synchronize: true,
     }),
     CacheModule.register({
@@ -49,13 +49,14 @@ import { CategoryModule } from './product-categories/product-categories.module';
       store: redisStore,
       ttl: 300,
     }),
-    TypeOrmModule.forFeature([User, Product, Order, OrderItem, Cart, CartItem, Address, Coupons, Discounts, OrderStatusHistory, PaymentMethods, Payments, ProductCategories, ProductInventory, ProductReviews, ShippingDetails, UserDetails, UserRoles]),
+    TypeOrmModule.forFeature([User, Product, Order, OrderItem, Cart, CartItem, Address, Coupons, Discounts, OrderStatusHistory, PaymentMethods, Payments, ProductCategories, ProductInventory, ProductReviews, ShippingDetails, UserDetails]),
     SeederModule,
     UserModule,
     ProductModule,
     OrderModule,
     CartModule,
     PaymentMethodsModule,
+    ProductReviewsModule,
     CategoryModule,
     AuthModule
   ],

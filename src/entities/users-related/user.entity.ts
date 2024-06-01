@@ -3,7 +3,6 @@ import { Address } from './address.entity';
 import { Cart } from '../cart.entity';
 import { Order } from '../orders-related/order.entity';
 import { UserDetails } from './user-details.entity';
-import { UserRoles } from './user-roles.entity';
 import { ProductReviews } from '../products-related/product-reviews.entity';
 
 @Entity()
@@ -16,6 +15,9 @@ export class User {
 
   @Column()
   email: string;
+  
+  @Column()
+  userRole: string;
 
   @Column()
   password: string;
@@ -31,10 +33,6 @@ export class User {
 
   @OneToMany(() => UserDetails, userDetails => userDetails.user)
   details: UserDetails[];
-
-  @ManyToMany(() => UserRoles, userRoles => userRoles.users)
-  @JoinTable()
-  roles: UserRoles[];
 
   @OneToMany(() => ProductReviews, productReviews => productReviews.user)
   reviews: ProductReviews[];

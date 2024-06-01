@@ -7,15 +7,15 @@ export class ProductReviews {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Product, product => product.reviews)
-  product: Product;
-
-  @ManyToOne(() => User, user => user.reviews)
-  user: User;
-
   @Column()
   rating: number;
 
   @Column()
   comment: string;
+
+  @ManyToOne(() => Product, product => product.reviews, { onDelete: 'CASCADE' })
+  product: Product;
+
+  @ManyToOne(() => User, user => user.reviews, { onDelete: 'CASCADE' })
+  user: User;
 }

@@ -4,7 +4,7 @@ import { Product } from './product.entity';
 @Entity()
 export class Discounts {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   @ManyToOne(() => Product, product => product.discounts)
   product: Product;
