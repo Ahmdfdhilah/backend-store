@@ -1,6 +1,5 @@
 import { ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
-import { UpdateCategoryDto } from 'src/product-categories/dto/update-product-categories.dto';
 
 class UpdateInventoryDto {
   stock: number;

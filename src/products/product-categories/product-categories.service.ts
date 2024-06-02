@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, Inject, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ProductCategories } from '../entities/products-related/product-categories.entity';
+import { ProductCategories } from '../../entities/products-related/product-categories.entity';
 import { CreateCategoryDto } from './dto/create-product-categories.dto';
 import { UpdateCategoryDto } from './dto/update-product-categories.dto';
 import { Cache } from 'cache-manager';

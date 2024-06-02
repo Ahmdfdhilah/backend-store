@@ -12,7 +12,7 @@ import { OrderController } from './order.controller';
 import { PaymentMethods } from 'src/entities/orders-related/payment-methods.entity';
 import { UserModule } from 'src/users/user.module';
 import { ProductModule } from 'src/products/product.module';
-import { PaymentMethodsModule } from 'src/payment-methods/payment-methods.module';
+import { PaymentMethodsModule } from './payment-methods/payment-methods.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Order, OrderItem, OrderStatusHistory, ShippingDetails, Payments, Product, User, PaymentMethods]), UserModule, ProductModule, PaymentMethodsModule],

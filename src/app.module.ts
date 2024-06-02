@@ -27,9 +27,9 @@ import { ProductInventory } from './entities/products-related/product-inventory.
 import { ProductReviews } from './entities/products-related/product-reviews.entity';
 import { ShippingDetails } from './entities/orders-related/shipping-details.entity';
 import { UserDetails } from './entities/users-related/user-details.entity';
-import { PaymentMethodsModule } from './payment-methods/payment-methods.module';
-import { CategoryModule } from './product-categories/product-categories.module';
-import { ProductReviewsModule } from './product-review/product-review.module';
+import { PaymentMethodsModule } from './orders/payment-methods/payment-methods.module';
+import { CategoryModule } from './products/product-categories/product-categories.module';
+import { ProductReviewsModule } from './products/product-review/product-review.module';
 
 @Module({
   imports: [

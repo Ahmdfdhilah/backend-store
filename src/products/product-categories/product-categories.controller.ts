@@ -3,7 +3,7 @@ import { CategoryService } from './product-categories.service';
 import { CreateCategoryDto } from './dto/create-product-categories.dto';
 import { UpdateCategoryDto } from './dto/update-product-categories.dto';
 
-@Controller('categories')
+@Controller('products/categories')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
