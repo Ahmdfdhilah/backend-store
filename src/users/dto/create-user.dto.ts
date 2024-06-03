@@ -9,8 +9,11 @@ class CreateAddressDto {
 }
 
 class CreateUserDetailsDto {
-  address: string;
+  firstName: string;
+  lastName: string;
+  fullName: string;
   phone: string;
+  country: string;
 }
 
 class CreateReviewDto {

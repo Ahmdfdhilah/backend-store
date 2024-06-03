@@ -3,7 +3,6 @@ import { CartService } from './cart.service';
 import { CreateCartDto } from './dto/create-cart.dto';
 import { UpdateCartDto } from './dto/update-cart.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
-import { LocalGuard } from 'src/auth/guards/local.guard';
 
 @Controller('carts')
 @UseGuards(JwtAuthGuard)

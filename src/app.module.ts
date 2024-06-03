@@ -17,19 +17,18 @@ import { OrderItem } from './entities/orders-related/order-item.entity';
 import { SeederService } from './seeder/seeder.service';
 import { AuthModule } from './auth/auth.module';
 import { Address } from './entities/users-related/address.entity';
-import { Coupons } from './entities/coupon.entity';
+import { Coupons } from './entities/orders-related/coupon.entity';
 import { Discounts } from './entities/products-related/discounts.entity';
 import { OrderStatusHistory } from './entities/orders-related/order-status.entity';
-import { PaymentMethods } from './entities/orders-related/payment-methods.entity';
 import { Payments } from './entities/orders-related/payments.entity';
 import { ProductCategories } from './entities/products-related/product-categories.entity';
 import { ProductInventory } from './entities/products-related/product-inventory.entity';
 import { ProductReviews } from './entities/products-related/product-reviews.entity';
 import { ShippingDetails } from './entities/orders-related/shipping-details.entity';
 import { UserDetails } from './entities/users-related/user-details.entity';
-import { PaymentMethodsModule } from './orders/payment-methods/payment-methods.module';
 import { CategoryModule } from './products/product-categories/product-categories.module';
 import { ProductReviewsModule } from './products/product-review/product-review.module';
+import { CouponsModule } from './orders/coupons/coupons.module';
 
 @Module({
   imports: [
@@ -41,7 +40,7 @@ import { ProductReviewsModule } from './products/product-review/product-review.m
       username: process.env.DB_USERNAME,
       database: process.env.DB_NAME,
       password: process.env.DB_PASSWORD,
-      entities: [User, Product, Order, OrderItem, Cart, CartItem, Address, Coupons, Discounts, OrderStatusHistory, PaymentMethods, Payments, ProductCategories, ProductInventory, ProductReviews, ShippingDetails, UserDetails],
+      entities: [User, Product, Order, OrderItem, Cart, CartItem, Address, Coupons, Discounts, OrderStatusHistory, Payments, ProductCategories, ProductInventory, ProductReviews, ShippingDetails, UserDetails],
       synchronize: true,
     }),
     CacheModule.register({
@@ -49,15 +48,15 @@ import { ProductReviewsModule } from './products/product-review/product-review.m
       store: redisStore,
       ttl: 300,
     }),
-    TypeOrmModule.forFeature([User, Product, Order, OrderItem, Cart, CartItem, Address, Coupons, Discounts, OrderStatusHistory, PaymentMethods, Payments, ProductCategories, ProductInventory, ProductReviews, ShippingDetails, UserDetails]),
+    TypeOrmModule.forFeature([User, Product, Order, OrderItem, Cart, CartItem, Address, Coupons, Discounts, OrderStatusHistory, Payments, ProductCategories, ProductInventory, ProductReviews, ShippingDetails, UserDetails]),
     SeederModule,
     UserModule,
     ProductModule,
     OrderModule,
     CartModule,
-    PaymentMethodsModule,
     ProductReviewsModule,
     CategoryModule,
+    CouponsModule,
     AuthModule
   ],
   controllers: [],

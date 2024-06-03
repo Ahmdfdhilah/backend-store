@@ -1,6 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 import { Order } from './order.entity';
-import { PaymentMethods } from './payment-methods.entity';
 
 @Entity()
 export class Payments {
@@ -13,11 +12,14 @@ export class Payments {
   @Column()
   amount: number;
 
-  @ManyToOne(() => PaymentMethods)
-  method: PaymentMethods;
+  @Column()
+  method: string;
 
   @Column()
   status: string;
+
+  @Column()
+  link_payment: string;
 
   @Column()
   paid_at: Date;

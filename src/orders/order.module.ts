@@ -9,13 +9,13 @@ import { Product } from '../entities/products-related/product.entity';
 import { User } from '../entities/users-related/user.entity';
 import { OrderService } from './order.service';
 import { OrderController } from './order.controller';
-import { PaymentMethods } from 'src/entities/orders-related/payment-methods.entity';
 import { UserModule } from 'src/users/user.module';
 import { ProductModule } from 'src/products/product.module';
-import { PaymentMethodsModule } from './payment-methods/payment-methods.module';
+import { Coupons } from 'src/entities/orders-related/coupon.entity';
+import { CouponsModule } from './coupons/coupons.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Order, OrderItem, OrderStatusHistory, ShippingDetails, Payments, Product, User, PaymentMethods]), UserModule, ProductModule, PaymentMethodsModule],
+  imports: [TypeOrmModule.forFeature([Order, OrderItem, OrderStatusHistory, ShippingDetails, Payments, Product, User, Coupons]), UserModule, ProductModule, CouponsModule],
   providers: [OrderService],
   controllers: [OrderController],
 })

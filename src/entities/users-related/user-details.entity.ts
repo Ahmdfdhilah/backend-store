@@ -7,10 +7,22 @@ export class UserDetails {
   id: string;
 
   @Column()
-  address: string;
+  firstName: string;
 
   @Column()
+  lastName: string;
+
+  @Column()
+  fullName: string;
+
+  @Column()
+  imgSrc: string;
+  
+  @Column()
   phone: string;
+
+  @Column()
+  country: string;
 
   @ManyToOne(() => User, user => user.details)
   user: User;

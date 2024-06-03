@@ -8,16 +8,18 @@ import { ShippingDetails } from '../entities/orders-related/shipping-details.ent
 import { Payments } from '../entities/orders-related/payments.entity';
 import { Product } from '../entities/products-related/product.entity';
 import { User } from '../entities/users-related/user.entity';
-import { PaymentMethods } from '../entities/orders-related/payment-methods.entity';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { plainToClass, classToPlain } from 'class-transformer';
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import midtransClient from 'midtrans-client';
+import { Coupons } from 'src/entities/orders-related/coupon.entity';
 
 @Injectable()
 export class OrderService {
   private readonly logger = new Logger(OrderService.name);
+  private readonly snap;
 
   constructor(
     @InjectRepository(Order) private readonly orderRepository: Repository<Order>,
@@ -27,9 +29,15 @@ export class OrderService {
     @InjectRepository(Payments) private readonly paymentsRepository: Repository<Payments>,
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     @InjectRepository(Product) private readonly productRepository: Repository<Product>,
-    @InjectRepository(PaymentMethods) private readonly paymentMethodsRepository: Repository<PaymentMethods>,
+    @InjectRepository(Coupons) private readonly couponsRepository: Repository<Coupons>,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
-  ) {}
+  ) {
+    this.snap = new midtransClient.Snap({
+      isProduction: false,
+      serverKey: process.env.MIDTRANS_SERVER_KEY,
+      clientKey: process.env.MIDTRANS_CLIENT_KEY,
+    });
+  }
 
   async findAll(): Promise<Order[]> {
     const cacheKey = 'orders';
@@ -40,7 +48,7 @@ export class OrderService {
     }
 
     const orders = await this.orderRepository.find({
-      relations: ['items', 'items.product', 'statusHistory', 'shippingDetails', 'payments', 'payments.method'],
+      relations: ['items', 'items.product', 'statusHistory', 'shippingDetails', 'payments'],
     });
     await this.cacheManager.set(cacheKey, classToPlain(orders), 1000000);
     return orders;
@@ -56,7 +64,7 @@ export class OrderService {
 
     const order = await this.orderRepository.findOne({
       where: { id },
-      relations: ['items', 'items.product', 'user', 'statusHistory', 'shippingDetails', 'payments', 'payments.method'],
+      relations: ['items', 'items.product', 'user', 'statusHistory', 'shippingDetails', 'payments'],
     });
     if (!order) {
       throw new NotFoundException(`Order with ID ${id} not found`);
@@ -66,13 +74,13 @@ export class OrderService {
   }
 
   async create(createOrderDto: CreateOrderDto): Promise<any> {
-    const { userId, items, statusHistory, shippingDetails, payments } = createOrderDto;
-
-    const user = await this.userRepository.findOne({ where: { id: userId } });
+    const { userId, items, statusHistory, shippingDetails, couponsId } = createOrderDto;
+  
+    const user = await this.userRepository.findOne({ where: { id: userId }, relations: ['details'] });
     if (!user) {
       throw new NotFoundException('User not found');
     }
-
+  
     const orderItems = await Promise.all(items.map(async item => {
       const product = await this.productRepository.findOne({ where: { id: item.productId } });
       if (!product) {
@@ -84,16 +92,29 @@ export class OrderService {
       });
       return orderItem;
     }));
-
+  
     const total = orderItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
-
+    // let discounted = 0;
+    // let coupon: Coupons | null = null;
+  
+    // if (couponsId) {
+    //   coupon = await this.couponsRepository.findOne({ where: { id: couponsId } });
+    //   if (coupon) {
+    //     discounted = (total * coupon.discount) / 100;
+    //     console.log("Coupon found");
+    //   } else {
+    //     console.log("Coupon not found");
+    //     coupon = null;
+    //   }
+    // }
+  
     const orderStatusHistories = statusHistory.map(status => {
       return this.orderStatusHistoryRepository.create({
         status: status.status,
         updated_at: new Date(status.updated_at),
       });
     });
-
+  
     const orderShippingDetails = shippingDetails.map(details => {
       return this.shippingDetailsRepository.create({
         address: details.address,
@@ -102,44 +123,84 @@ export class OrderService {
         country: details.country,
       });
     });
-
-    const orderPayments = await Promise.all(payments.map(async payment => {
-      const paymentMethod = await this.paymentMethodsRepository.findOne({ where: { id: payment.methodId } });
-      if (!paymentMethod) {
-        throw new NotFoundException(`Payment method not found: ${payment.methodId}`);
-      }
-      return this.paymentsRepository.create({
-        amount: payment.amount,
-        method: paymentMethod,
-        status: payment.status,
-        paid_at: new Date(payment.paid_at),
-      });
-    }));
-
+  
+    const orderPayments = this.paymentsRepository.create({
+      amount: total,
+      status: 'pending',
+      paid_at: new Date(),
+    });
+  
     const order = this.orderRepository.create({
       user,
       items: orderItems,
       statusHistory: orderStatusHistories,
       shippingDetails: orderShippingDetails,
-      payments: orderPayments,
-      total,
+      payments: [orderPayments],
+      total: total,
     });
-
+  
     const newOrder = await this.orderRepository.save(order);
-
-    await this.cacheManager.del('orders');
-    this.logger.log('Cleared allOrders cache');
-    
-    const res = await this.orderRepository.findOne({
-      where: { id: newOrder.id },
-      relations: ['items', 'items.product', 'statusHistory', 'shippingDetails', 'payments', 'payments.method'],
-    });
-
-    return res;
+    try {
+      const userDetails = user.details[0];
+      console.log('User Details:', userDetails);
+  
+      const transactionPayload = {
+        transaction_details: {
+          order_id: newOrder.id,
+          gross_amount: total,
+        },
+        customer_details: {
+          email: user.email,
+          first_name: user.details?.[0]?.firstName,
+          last_name: user.details?.[0]?.lastName,
+          phone: user.details?.[0]?.phone,
+          shipping_address: {
+            first_name: user.details?.[0]?.firstName,
+            last_name: user.details?.[0]?.lastName,
+            phone: user.details?.[0]?.phone,
+            email: user.email,
+            address: orderShippingDetails?.[0]?.address,
+            city: orderShippingDetails?.[0]?.city,
+            postal_code: orderShippingDetails?.[0]?.postalCode,
+            country_code: user.details?.[0]?.country
+          }
+        },
+        item_details: orderItems.map(item => ({
+          id: item.product.id,
+          price: item.product.price,
+          quantity: item.quantity,
+          name: item.product.name,
+        })),
+      };
+  
+      console.log('Transaction Payload:', transactionPayload);
+  
+      const transaction = await this.snap.createTransaction(transactionPayload);
+      newOrder.snapToken = transaction.token;
+      await this.orderRepository.save(newOrder);
+      orderPayments.link_payment = transaction.redirect_url;
+      await this.paymentsRepository.save(orderPayments);
+  
+      await this.cacheManager.del('orders');
+      this.logger.log('Cleared allOrders cache');
+  
+      return {
+        order: await this.orderRepository.findOne({
+          where: { id: newOrder.id },
+          relations: ['items', 'items.product', 'statusHistory', 'shippingDetails', 'payments'],
+        }),
+        paymentUrl: transaction.redirect_url,
+        payload: transactionPayload
+      };
+    } catch (error) {
+      this.logger.error('Midtrans transaction creation failed:', error);
+      throw new Error('Midtrans transaction creation failed');
+    }
   }
+  
 
   async update(id: string, updateOrderDto: UpdateOrderDto): Promise<Order> {
-    const { userId, items, statusHistory, shippingDetails, payments } = updateOrderDto;
+    const { userId, items, statusHistory, shippingDetails, couponsId } = updateOrderDto;
 
     const order = await this.orderRepository.findOne({
       where: { id },
@@ -205,24 +266,6 @@ export class OrderService {
       for (const shippingDetail of orderShippingDetails) {
         await this.shippingDetailsRepository.save(shippingDetail);
       }
-    }
-
-    if (payments) {
-      await this.paymentsRepository.delete({ order });
-      const orderPayments = await Promise.all(payments.map(async payment => {
-        const paymentMethod = await this.paymentMethodsRepository.findOne({ where: { id: payment.methodId } });
-        if (!paymentMethod) {
-          throw new NotFoundException(`Payment method not found: ${payment.methodId}`);
-        }
-        return this.paymentsRepository.create({
-          amount: payment.amount,
-          method: paymentMethod,
-          status: payment.status,
-          paid_at: new Date(payment.paid_at),
-          order,
-        });
-      }));
-      order.payments = orderPayments;
     }
 
     if (items) {

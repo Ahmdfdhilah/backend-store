@@ -9,6 +9,8 @@ export class UpdateOrderDto {
   @IsInt()
   total: number;
 
+  couponsId?: string;
+
   @ValidateNested({ each: true })
   @Type(() => CreateOrderItemDto)
   items: CreateOrderItemDto[];

@@ -85,8 +85,11 @@ export class UserService {
     if (details) {
       const detailsEntities = details.map(item => {
         const detailsEntity = new UserDetails();
-        detailsEntity.address = item.address;
         detailsEntity.phone = item.phone;
+        detailsEntity.country = item.country;
+        detailsEntity.firstName = item.firstName;
+        detailsEntity.lastName = item.lastName;
+        detailsEntity.fullName = item.fullName;
         detailsEntity.user = newUser;
         return detailsEntity;
       });
@@ -166,8 +169,11 @@ export class UserService {
       await this.userDetailsRepository.delete({ user });
       const detailsEntities = details.map(item => {
         const detailsEntity = new UserDetails();
-        detailsEntity.address = item.address;
         detailsEntity.phone = item.phone;
+        detailsEntity.country = item.country;
+        detailsEntity.firstName = item.firstName;
+        detailsEntity.lastName = item.lastName;
+        detailsEntity.fullName = item.fullName;
         detailsEntity.user = user;
         return detailsEntity;
       });
@@ -197,7 +203,7 @@ export class UserService {
   async remove(id: string): Promise<void> {
     const user = await this.userRepository.findOne({
       where: { id },
-      relations: ['addresses', 'details', 'roles', 'reviews'],
+      relations: ['addresses', 'details', 'reviews'],
     });
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);

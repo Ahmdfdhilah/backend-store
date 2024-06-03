@@ -28,7 +28,7 @@ export class CreatePaymentsDto {
   amount: number;
 
   @IsUUID()
-  methodId: string;
+  method: string;
 
   status: string;
 
@@ -42,6 +42,7 @@ export class CreateOrderDto {
 
   @IsInt()
   total: number;
+  couponsId?: string;
 
   @ValidateNested({ each: true })
   @Type(() => CreateOrderItemDto)

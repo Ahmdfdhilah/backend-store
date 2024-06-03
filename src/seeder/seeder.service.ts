@@ -7,7 +7,6 @@ import { ProductInventory } from '../entities/products-related/product-inventory
 import { ProductReviews } from '../entities/products-related/product-reviews.entity';
 import { Discounts } from '../entities/products-related/discounts.entity';
 import { ProductCategories } from '../entities/products-related/product-categories.entity';
-import { PaymentMethods } from '../entities/orders-related/payment-methods.entity';
 import * as bcrypt from 'bcryptjs';
 
 @Injectable()
@@ -19,15 +18,13 @@ export class SeederService {
     @InjectRepository(ProductReviews) private readonly productReviewsRepository: Repository<ProductReviews>,
     @InjectRepository(Discounts) private readonly discountsRepository: Repository<Discounts>,
     @InjectRepository(ProductCategories) private readonly productCategoriesRepository: Repository<ProductCategories>,
-    @InjectRepository(PaymentMethods) private readonly paymentMethodsRepository: Repository<PaymentMethods>,
   ) {}
 
   private async isDatabaseEmpty(): Promise<boolean> {
     const userCount = await this.userRepository.count();
     const productCount = await this.productRepository.count();
     const categoryCount = await this.productCategoriesRepository.count();
-    const paymentMethodCount = await this.paymentMethodsRepository.count();
-    return userCount === 0 && productCount === 0 && categoryCount === 0 && paymentMethodCount === 0;
+    return userCount === 0 && productCount === 0 && categoryCount === 0;
   }
 
   async seed() {
@@ -35,7 +32,6 @@ export class SeederService {
     if (isDatabaseEmpty) {
       await this.seedUsers();
       await this.seedCategories();
-      await this.seedPaymentMethods();
       await this.seedProducts();
     }
   }
@@ -62,19 +58,6 @@ export class SeederService {
     for (const category of categories) {
       const newCategory = this.productCategoriesRepository.create(category);
       await this.productCategoriesRepository.save(newCategory);
-    }
-  }
-
-  private async seedPaymentMethods() {
-    const paymentMethods = [
-      { name: 'Credit Card', details: 'Visa, MasterCard, Amex' },
-      { name: 'PayPal', details: 'Pay via PayPal' },
-      { name: 'Bank Transfer', details: 'Transfer directly to our bank account' },
-    ];
-
-    for (const method of paymentMethods) {
-      const newPaymentMethod = this.paymentMethodsRepository.create(method);
-      await this.paymentMethodsRepository.save(newPaymentMethod);
     }
   }
 

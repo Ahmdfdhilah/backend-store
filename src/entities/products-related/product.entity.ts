@@ -15,6 +15,9 @@ export class Product {
   name: string;
 
   @Column()
+  imgSrc: string;
+  
+  @Column()
   price: number;
 
   @OneToMany(() => CartItem, cartItem => cartItem.product)

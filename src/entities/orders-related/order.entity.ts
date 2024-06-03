@@ -1,9 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, ManyToOne, OneToMany, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, ManyToOne, OneToMany, Column, ManyToMany } from 'typeorm';
 import { User } from '../users-related/user.entity';
 import { OrderItem } from './order-item.entity';
 import { OrderStatusHistory } from './order-status.entity';
 import { ShippingDetails } from './shipping-details.entity';
 import { Payments } from './payments.entity';
+import { Coupons } from './coupon.entity';
 
 @Entity()
 export class Order {
@@ -15,6 +16,9 @@ export class Order {
 
   @Column()
   total: number;
+  
+  @Column()
+  snapToken: string;
 
   @OneToMany(() => OrderItem, items => items.order, {cascade: true})
   items: OrderItem[];
@@ -27,4 +31,7 @@ export class Order {
 
   @OneToMany(() => Payments, payments => payments.order, {cascade:true})
   payments: Payments[];
+
+  @ManyToOne(() => Coupons, coupons => coupons.orders, { nullable: true })
+  coupons: Coupons;
 }

@@ -9,7 +9,10 @@ class UpdateAddressDto {
 }
 
 class UpdateUserDetailsDto {
-  address?: string;
+  firstName?: string;
+  lastName?: string;
+  fullName?: string;
+  country?: string;
   phone?: string;
 }
 
