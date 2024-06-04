@@ -6,10 +6,12 @@ import { Product } from '../entities/products-related/product.entity';
 import { CartItem } from '../entities/cart-item.entity';
 import { OrderItem } from '../entities/orders-related/order-item.entity';
 import { ProductReviews } from '../entities/products-related/product-reviews.entity';
-import { ProductCategories } from '../entities/products-related/product-categories.entity';
 import { ProductInventory } from '../entities/products-related/product-inventory.entity';
 import { Discounts } from '../entities/products-related/discounts.entity';
 import { User } from 'src/entities/users-related/user.entity';
+import { SpecsLaptop } from 'src/entities/products-related/specs/specs-laptop.entity';
+import { SpecsSmartphone } from 'src/entities/products-related/specs/specs-smartphone.entity';
+import { SpecsTablet } from 'src/entities/products-related/specs/specs-tablet.entity';
 
 @Module({
   imports: [
@@ -18,7 +20,9 @@ import { User } from 'src/entities/users-related/user.entity';
       CartItem,
       OrderItem,
       ProductReviews,
-      ProductCategories,
+      SpecsLaptop,
+      SpecsSmartphone,
+      SpecsTablet,
       ProductInventory,
       Discounts,
       User

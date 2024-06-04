@@ -3,42 +3,35 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../entities/users-related/user.entity';
 import { Product } from '../entities/products-related/product.entity';
-import { ProductInventory } from '../entities/products-related/product-inventory.entity';
-import { ProductReviews } from '../entities/products-related/product-reviews.entity';
-import { Discounts } from '../entities/products-related/discounts.entity';
-import { ProductCategories } from '../entities/products-related/product-categories.entity';
 import * as bcrypt from 'bcryptjs';
+import { SpecsLaptop } from 'src/entities/products-related/specs/specs-laptop.entity';
+import { SpecsSmartphone } from 'src/entities/products-related/specs/specs-smartphone.entity';
+import { SpecsTablet } from 'src/entities/products-related/specs/specs-tablet.entity';
 
 @Injectable()
 export class SeederService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     @InjectRepository(Product) private readonly productRepository: Repository<Product>,
-    @InjectRepository(ProductInventory) private readonly productInventoryRepository: Repository<ProductInventory>,
-    @InjectRepository(ProductReviews) private readonly productReviewsRepository: Repository<ProductReviews>,
-    @InjectRepository(Discounts) private readonly discountsRepository: Repository<Discounts>,
-    @InjectRepository(ProductCategories) private readonly productCategoriesRepository: Repository<ProductCategories>,
-  ) {}
-
-  private async isDatabaseEmpty(): Promise<boolean> {
-    const userCount = await this.userRepository.count();
-    const productCount = await this.productRepository.count();
-    const categoryCount = await this.productCategoriesRepository.count();
-    return userCount === 0 && productCount === 0 && categoryCount === 0;
-  }
+    @InjectRepository(SpecsSmartphone) private readonly specsSmartphoneRepository: Repository<SpecsSmartphone>,
+    @InjectRepository(SpecsLaptop) private readonly specsLaptopRepository: Repository<SpecsLaptop>,
+    @InjectRepository(SpecsTablet) private readonly specsTabletRepository: Repository<SpecsTablet>,
+  ) { }
 
   async seed() {
-    const isDatabaseEmpty = await this.isDatabaseEmpty();
-    if (isDatabaseEmpty) {
+    const userCount = await this.userRepository.count();
+    const productCount = await this.productRepository.count();
+    if (userCount === 0) {
       await this.seedUsers();
-      await this.seedCategories();
+    }
+    if (productCount === 0){
       await this.seedProducts();
     }
   }
 
   private async seedUsers() {
     const users = [
-      { username: 'testuser', email: 'test@example.com', password: 'password', UserRoles: "admin" },
+      { username: 'ahmdfdhilah', email: 'test@example.com', password: 'password', UserRole: "admin" },
     ];
 
     for (const user of users) {
@@ -48,94 +41,742 @@ export class SeederService {
     }
   }
 
-  private async seedCategories() {
-    const categories = [
-      { name: 'Electronics' },
-      { name: 'Clothing' },
-      { name: 'Books' },
-    ];
-
-    for (const category of categories) {
-      const newCategory = this.productCategoriesRepository.create(category);
-      await this.productCategoriesRepository.save(newCategory);
-    }
-  }
-
   private async seedProducts() {
     const products = [
       {
-        name: 'Mito AE23',
-        price: 100,
+        name: "Asus ROG Zephyrus G14",
+        price: 25000000,
+        laptopSpecs: {
+          brand: "Asus",
+          model: "ROG Zephyrus G14",
+          company: "AsusTek Computer Inc.",
+          ram: "16 GB DDR4",
+          size: "14 inches",
+          ssd: "512 GB NVMe PCIe 3.0",
+          color: "Eclipse Gray",
+          operatingSystem: "Windows 10 Home",
+          hardDisk: "No",
+          modelNumber: "GA401IV-BR9N6",
+          processor: "AMD Ryzen 9 4900HS",
+          graphicsProcessor: "NVIDIA GeForce RTX 2060 Max-Q",
+          dedicatedGraphics: "6GB GDDR6",
+          fingerprintSensor: "No",
+          resolution: "1920 x 1080 pixels",
+          wifiStandardsSupported: "Wi-Fi 6 (802.11ax)",
+          weight: "1.6 kg",
+          dimensions: "32.5 x 22.1 x 1.79 cm",
+          bluetoothVersion: "Bluetooth 5.0",
+          numberOfUSBPorts: "4",
+          series: "ROG Zephyrus",
+          internalMic: "Yes",
+          touchScreen: "No",
+          baseClockSpeed: "3.0 GHz",
+          productName: "ROG Zephyrus G14",
+          touchpad: "Yes",
+          batteryCell: "4-cell",
+          pointerDevice: "Touchpad",
+          cache: "8MB",
+          micIn: "Yes",
+          speakers: "2 x 2W speakers",
+          multiCardSlot: "No",
+          rj45LAN: "No",
+          hdmiPort: "Yes",
+          ethernet: "No",
+          batteryLife: "Up to 10 hours",
+          dedicatedGraphicMemoryType: "GDDR6",
+          expandableRAM: "No"
+        },
         inventory: [],
         reviews: [],
         discounts: [],
-        categories: [],
+        category: "laptop"
       },
       {
-        name: 'SAMSUNG 23A',
-        price: 200,
+        name: "Dell XPS 15",
+        price: 30000000,
+        laptopSpecs: {
+          brand: "Dell",
+          model: "XPS 15",
+          company: "Dell Technologies",
+          ram: "32 GB DDR4",
+          size: "15.6 inches",
+          ssd: "1 TB PCIe NVMe SSD",
+          color: "Platinum Silver with Black Carbon Fiber Palmrest",
+          operatingSystem: "Windows 10 Pro",
+          hardDisk: "No",
+          modelNumber: "XPS7590-7541SLV-PUS",
+          processor: "Intel Core i9-9980HK",
+          graphicsProcessor: "NVIDIA GeForce GTX 1650",
+          dedicatedGraphics: "4GB GDDR5",
+          fingerprintSensor: "Yes",
+          resolution: "3840 x 2160 pixels",
+          wifiStandardsSupported: "Killer Wi-Fi 6 AX1650",
+          weight: "2 kg",
+          dimensions: "35.7 x 23.5 x 1.7 cm",
+          bluetoothVersion: "Bluetooth 5.0",
+          numberOfUSBPorts: "3",
+          series: "XPS",
+          internalMic: "Yes",
+          touchScreen: "No",
+          baseClockSpeed: "2.4 GHz",
+          productName: "XPS 15",
+          touchpad: "Yes",
+          batteryCell: "6-cell",
+          pointerDevice: "Precision touchpad",
+          cache: "16MB",
+          micIn: "Yes",
+          speakers: "2 x 2W speakers",
+          multiCardSlot: "Yes",
+          rj45LAN: "No",
+          hdmiPort: "Yes",
+          ethernet: "No",
+          batteryLife: "Up to 8 hours",
+          dedicatedGraphicMemoryType: "GDDR5",
+          expandableRAM: "No"
+        },
         inventory: [],
         reviews: [],
         discounts: [],
-        categories: [],
+        category: "laptop"
       },
+      {
+        name: "HP Spectre x360",
+        price: 22000000,
+        laptopSpecs: {
+          brand: "HP",
+          model: "Spectre x360",
+          company: "HP Inc.",
+          ram: "16 GB LPDDR4X-3733 SDRAM",
+          size: "13.3 inches",
+          ssd: "1 TB PCIe NVMe SSD",
+          color: "Poseidon Blue with Pale Brass accents",
+          operatingSystem: "Windows 10 Home 64",
+          hardDisk: "No",
+          modelNumber: "13-aw0043dx",
+          processor: "Intel Core i7-1065G7",
+          graphicsProcessor: "Intel Iris Plus Graphics",
+          dedicatedGraphics: "Integrated",
+          fingerprintSensor: "Yes",
+          resolution: "1920 x 1080 pixels",
+          wifiStandardsSupported: "Intel Wi-Fi 6 AX 201",
+          weight: "1.27 kg",
+          dimensions: "30.6 x 19.45 x 1.69 cm",
+          bluetoothVersion: "Bluetooth 5",
+          numberOfUSBPorts: "2",
+          series: "Spectre x360",
+          internalMic: "Dual array digital microphones",
+          touchScreen: "Yes",
+          baseClockSpeed: "1.3 GHz",
+          productName: "Spectre x360",
+          touchpad: "HP Imagepad with multi-touch gesture support",
+          batteryCell: "4-cell",
+          pointerDevice: "Touchpad",
+          cache: "8MB",
+          micIn: "Yes",
+          speakers: "Bang & Olufsen, quad speakers",
+          multiCardSlot: "No",
+          rj45LAN: "No",
+          hdmiPort: "Yes",
+          ethernet: "No",
+          batteryLife: "Up to 22 hours",
+          dedicatedGraphicMemoryType: "Integrated",
+          expandableRAM: "No"
+        },
+        inventory: [],
+        reviews: [],
+        discounts: [],
+        category: "laptop"
+      },
+      {
+        name: "Lenovo ThinkPad X1 Carbon",
+        price: 27000000,
+        laptopSpecs: {
+          brand: "Lenovo",
+          model: "ThinkPad X1 Carbon",
+          company: "Lenovo Group Limited",
+          ram: "16 GB LPDDR3 2133MHz",
+          size: "14 inches",
+          ssd: "512 GB PCIe NVMe M.2 SSD",
+          color: "Black",
+          operatingSystem: "Windows 10 Pro 64",
+          hardDisk: "No",
+          modelNumber: "20QD000BUS",
+          processor: "Intel Core i7-8665U",
+          graphicsProcessor: "Intel UHD Graphics 620",
+          dedicatedGraphics: "Integrated",
+          fingerprintSensor: "Yes",
+          resolution: "1920 x 1080 pixels",
+          wifiStandardsSupported: "Intel Wireless-AC 9560, Wi-Fi 2x2 802.11ac",
+          weight: "1.09 kg",
+          dimensions: "32.3 x 21.7 x 1.49 cm",
+          bluetoothVersion: "Bluetooth 5.0",
+          numberOfUSBPorts: "2",
+          series: "ThinkPad X1 Carbon",
+          internalMic: "Yes",
+          touchScreen: "No",
+          baseClockSpeed: "1.9 GHz",
+          productName: "ThinkPad X1 Carbon",
+          touchpad: "Buttonless glass surface multi-touch touchpad",
+          batteryCell: "4-cell",
+          pointerDevice: "TrackPoint pointing device and buttonless Mylar surface multi-touch touchpad",
+          cache: "8MB",
+          micIn: "Yes",
+          speakers: "Dolby Audio Premium",
+          multiCardSlot: "Yes",
+          rj45LAN: "No",
+          hdmiPort: "Yes",
+          ethernet: "No",
+          batteryLife: "Up to 18.3 hours",
+          dedicatedGraphicMemoryType: "Integrated",
+          expandableRAM: "No"
+        },
+        inventory: [],
+        reviews: [],
+        discounts: [],
+        category: "laptop"
+      },
+      {
+        name: "Apple MacBook Pro 16-inch",
+        price: 40000000,
+        laptopSpecs: {
+          brand: "Apple",
+          model: "MacBook Pro 16-inch",
+          company: "Apple Inc.",
+          ram: "64 GB DDR4",
+          size: "16 inches",
+          ssd: "2 TB SSD",
+          color: "Silver",
+          operatingSystem: "macOS",
+          hardDisk: "No",
+          modelNumber: "MVVK2LL/A",
+          processor: "2.3 GHz 8-Core Intel Core i9",
+          graphicsProcessor: "AMD Radeon Pro 5500M with 4GB of GDDR6",
+          dedicatedGraphics: "4GB GDDR6",
+          fingerprintSensor: "No",
+          resolution: "3072 x 1920 pixels",
+          wifiStandardsSupported: "802.11ac Wi-Fi wireless networking; IEEE 802.11a/b/g/n compatible",
+          weight: "2 kg",
+          dimensions: "35.79 x 24.59 x 1.62 cm",
+          bluetoothVersion: "Bluetooth 5.0",
+          numberOfUSBPorts: "4",
+          series: "MacBook Pro",
+          internalMic: "Yes",
+          touchScreen: "No",
+          baseClockSpeed: "2.3 GHz",
+          productName: "MacBook Pro 16-inch",
+          touchpad: "Force Touch trackpad for precise cursor control and pressure-sensing capabilities; enables Force clicks, accelerators, pressure-sensitive drawing, and Multi-Touch gestures",
+          batteryCell: "6-cell",
+          pointerDevice: "Force Touch trackpad",
+          cache: "16MB",
+          micIn: "Yes",
+          speakers: "Six-speaker system with force-canceling woofers",
+          multiCardSlot: "No",
+          rj45LAN: "No",
+          hdmiPort: "Yes",
+          ethernet: "No",
+          batteryLife: "Up to 11 hours",
+          dedicatedGraphicMemoryType: "GDDR6",
+          expandableRAM: "No"
+        },
+        inventory: [],
+        reviews: [],
+        discounts: [],
+        category: "laptop"
+      },{
+        name: "Samsung Galaxy S22 Ultra",
+        price: 20000000,
+        smartphoneSpecs: {
+          brand: "Samsung",
+          model: "Galaxy S22 Ultra",
+          company: "Samsung Electronics",
+          os: "Android 12",
+          chipset: "Exynos 2200 - International",
+          cpu: "Octa-core (1x2.9 GHz Cortex-X2 & 3x2.80 GHz Cortex-A710 & 4x1.7 GHz Cortex-A510)",
+          gpu: "Mali-G710 - International",
+          cardSlot: false,
+          internal: "512GB 12GB RAM, 1TB 16GB RAM, UFS 3.1",
+          dualCamera: "108 MP, f/1.8, 26mm (wide), 1/1.33\", 0.8µm, PDAF, Laser AF, OIS",
+          features: "LED flash, auto-HDR, panorama",
+          dualVideo: "4K@30/60fps, 1080p@30fps, gyro-EIS",
+          singleCamera: "40 MP, f/2.2, 26mm (wide), 1/2.8\", 0.7µm, PDAF",
+          singleVideo: "4K@30/60fps, 1080p@30fps, gyro-EIS",
+          loudspeaker: true,
+          wlan: "Wi-Fi 802.11 a/b/g/n/ac/6e, dual-band, Wi-Fi Direct, hotspot",
+          bluetooth: "5.2, A2DP, LE",
+          positioning: "GPS, GLONASS, BDS, GALILEO",
+          nfc: true,
+          infraredPort: false,
+          radio: false,
+          usb: "USB Type-C 4.0, USB On-The-Go",
+          batteryType: "Li-Ion 5000 mAh, non-removable",
+          charging: "Fast charging 65W, 100% in 30 min (advertised)",
+          color: "Phantom Black, Phantom White, Phantom Green, Phantom Pink",
+          screenType: "Dynamic AMOLED 2X, 120Hz, HDR10+, 1500 nits (peak)",
+          screenSize: "6.8 inches, 114.2 cm2 (~92.0% screen-to-body ratio)",
+          resolution: "1440 x 3200 pixels, 20:9 ratio (~516 ppi density)",
+          dimensions: "163.5 x 76.3 x 8.9 mm (6.44 x 3.00 x 0.35 in)",
+          weight: "228 g (Sub6), 229 g (mmWave) (8.04 oz)",
+          build: "Glass front (Gorilla Glass Victus+), glass back (Gorilla Glass Victus+), aluminum frame",
+          sim: "Single SIM (Nano-SIM and/or eSIM) or Dual SIM (Nano-SIM and/or eSIM, dual stand-by)",
+        },
+        inventory: [],
+        reviews: [],
+        discounts: [],
+        category: "smartphone"
+      },
+      {
+        name: "iPhone 14 Pro Max",
+        price: 23000000,
+        smartphoneSpecs: {
+          brand: "Apple",
+          model: "iPhone 14 Pro Max",
+          company: "Apple Inc.",
+          os: "iOS 17",
+          chipset: "Apple A17 Bionic",
+          cpu: "Hexa-core",
+          gpu: "Apple GPU",
+          cardSlot: false,
+          internal: "128GB 6GB RAM, 256GB 8GB RAM, 512GB 8GB RAM, 1TB 8GB RAM",
+          dualCamera: "12 MP, f/1.5, 26mm (wide), 1.9µm, dual pixel PDAF, sensor-shift OIS",
+          features: "Quad-LED dual-tone flash, HDR (photo/panorama)",
+          dualVideo: "4K@24/30/60fps, 1080p@30/60/120/240fps, HDR, Dolby Vision HDR (up to 60fps)",
+          singleCamera: "12 MP, f/2.2, 65mm (telephoto), 1/3.4\", 1.0µm, PDAF, OIS, 3x optical zoom",
+          singleVideo: "4K@24/30/60/120fps, 1080p@30/60/120/240fps, gyro-EIS",
+          loudspeaker: true,
+          wlan: "Wi-Fi 802.11 a/b/g/n/ac/6, dual-band, hotspot",
+          bluetooth: "5.0, A2DP, LE",
+          positioning: "GPS, GLONASS, GALILEO, QZSS, NavIC",
+          nfc: true,
+          infraredPort: false,
+          radio: false,
+          usb: "Lightning, USB 2.0",
+          batteryType: "Li-Ion 4500 mAh, non-removable",
+          charging: "Fast charging 27W, 50% in 30 min (advertised)",
+          color: "Graphite, Gold, Silver, Sierra Blue",
+          screenType: "Super Retina XDR OLED, HDR10, Dolby Vision, 1000 nits (typ), 1600 nits (peak)",
+          screenSize: "6.7 inches, 110.3 cm2 (~88.3% screen-to-body ratio)",
+          resolution: "1284 x 2778 pixels, 19.5:9 ratio (~456 ppi density)",
+          dimensions: "160.8 x 78.1 x 7.7 mm (6.33 x 3.07 x 0.30 in)",
+          weight: "238 g (8.40 oz)",
+          build: "Glass front (Ceramic Shield), glass back (Ceramic Shield), stainless steel frame",
+          sim: "Single SIM (Nano-SIM and/or eSIM) or Dual SIM (Nano-SIM, dual stand-by) - for China",
+        },
+        inventory: [],
+        reviews: [],
+        discounts: [],
+        category: "smartphone"
+      },
+      {
+        name: "OnePlus 10 Pro",
+        price: 18000000,
+        smartphoneSpecs: {
+          brand: "OnePlus",
+          model: "10 Pro",
+          company: "OnePlus Technology Co., Ltd.",
+          os: "Android 13, OxygenOS",
+          chipset: "Qualcomm Snapdragon 8 Gen 2+",
+          cpu: "Octa-core (1x3.0 GHz Cortex-X3 & 3x2.8 GHz Cortex-A77 & 4x1.7 GHz Cortex-A55)",
+          gpu: "Adreno 730",
+          cardSlot: false,
+          internal: "256GB 8GB RAM, 512GB 12GB RAM, UFS 3.1",
+          dualCamera: "50 MP, f/1.8, 24mm (wide), 1/1.56\", 1.0µm, PDAF, OIS",
+          features: "Dual-LED flash, HDR, panorama",
+          dualVideo: "8K@30fps, 4K@30/60/120fps, 1080p@30/60/240fps, Auto HDR, gyro-EIS",
+          singleCamera: "32 MP, f/2.5, (wide), 1/2.8\", 0.8µm",
+          singleVideo: "1080p@30fps, gyro-EIS",
+          loudspeaker: true,
+          wlan: "Wi-Fi 802.11 a/b/g/n/ac/6, dual-band, Wi-Fi Direct, DLNA, hotspot",
+          bluetooth: "5.2, A2DP, LE, aptX HD",
+          positioning: "GPS, GLONASS, BDS, GALILEO, SBAS",
+          nfc: true,
+          infraredPort: false,
+          radio: false,
+          usb: "USB Type-C 4.2, USB On-The-Go",
+          batteryType: "Li-Po 5000 mAh, non-removable",
+          charging: "Fast charging 80W, 100% in 32 min (advertised)",
+          color: "Morning Mist, Starlight Black, Green Haze",
+          screenType: "Fluid AMOLED, 120Hz, HDR10+, 1300 nits (peak)",
+          screenSize: "6.7 inches, 108.4 cm2 (~90.7% screen-to-body ratio)",
+          resolution: "1440 x 3216 pixels, 20:9 ratio (~526 ppi density)",
+          dimensions: "163.2 x 73yebih ,2 x 7.8 mm (6.43 x 2.89 x 0.31 in)",
+          weight: "197 g (6.95 oz)",
+          build: "Glass front (Gorilla Glass 5), glass back (Gorilla Glass 5), aluminum frame",
+          sim: "Dual SIM (Nano-SIM, dual stand-by)",
+        },
+        inventory: [],
+        reviews: [],
+        discounts: [],
+        category: "smartphone"
+      },
+      {
+        name: "Xiaomi Redmi Note 13 Pro",
+        price: 3500000,
+        smartphoneSpecs: {
+          brand: "Xiaomi",
+          model: "Redmi Note 13 Pro",
+          company: "Xiaomi Corporation",
+          os: "Android 12, MIUI 14",
+          chipset: "Qualcomm Snapdragon 7 Gen 2",
+          cpu: "Octa-core (2x2.0 GHz Cortex-A76 & 6x1.8 GHz Cortex-A55)",
+          gpu: "Adreno 610",
+          cardSlot: true,
+          internal: "64GB 4GB RAM, 128GB 6GB RAM, 256GB 8GB RAM",
+          dualCamera: "64 MP, f/1.8, 26mm (wide), 1/1.97\", 0.7µm, PDAF",
+          features: "LED flash, HDR, panorama",
+          dualVideo: "1080p@30fps",
+          singleCamera: "8 MP, f/2.2, 119˚ (ultrawide), 1/4.0\", 1.12µm",
+          singleVideo: "1080p@30fps",
+          loudspeaker: true,
+          wlan: "Wi-Fi 802.11 a/b/g/n/ac, dual-band, Wi-Fi Direct, hotspot",
+          bluetooth: "5.1, A2DP, LE",
+          positioning: "GPS, A-GPS, GLONASS, GALILEO, BDS",
+          nfc: false,
+          infraredPort: true,
+          radio: true,
+          usb: "USB Type-C 2.0",
+          batteryType: "Li-Po 5000 mAh, non-removable",
+          charging: "Fast charging 33W",
+          color: "Glacier Blue, Phantom Green, Frost White, Midnight Black",
+          screenType: "Super AMOLED, 90Hz, 350 nits (typ)",
+          screenSize: "6.67 inches, 107.4 cm2 (~85.9% screen-to-body ratio)",
+          resolution: "1080 x 2400 pixels, 20:9 ratio (~395 ppi density)",
+          dimensions: "164.4 x 76.5 x 8.3 mm (6.47 x 3.01 x 0.33 in)",
+          weight: "179 g (6.31 oz)",
+          build: "Glass front (Gorilla Glass 5), plastic back, plastic frame",
+          sim: "Dual SIM (Nano-SIM, dual stand-by)",
+        },
+        inventory: [],
+        reviews: [],
+        discounts: [],
+        category: "smartphone"
+      },
+      {
+        name: "Realme Pad",
+        price: 3000000,
+        tabletSpecs: {
+          brand: "Realme",
+          model: "Pad",
+          launched: "2021, September 30",
+          dimensions: "246.5 x 155.9 x 6.9 mm (9.70 x 6.14 x 0.27 in)",
+          weight: "440 g (Wi-Fi)/ 450 g (LTE) (15.52 oz)",
+          batteryCapacity: "7100 mAh",
+          removableBattery: "No",
+          color: "Gray, Gold",
+          screenSize: "10.4 inches, 307.9 cm2 (~80.3% screen-to-body ratio)",
+          touchscreen: true,
+          resolution: "1200 x 2000 pixels, 5:3 ratio (~224 ppi density)",
+          ppi: "224",
+          processor: "Octa-core (4x2.3 GHz Cortex-A73 & 4x1.8 GHz Cortex-A53)",
+          processorMake: "Mediatek Helio G80 (12 nm)",
+          ram: "3GB",
+          internalStorage: "32GB",
+          expandableStorage: "microSDXC (dedicated slot)",
+          rearCamera: "8 MP, f/2.0, AF",
+          rearFlash: "LED flash",
+          frontCamera: "8 MP, f/2.0",
+          operatingSystem: "Android 11, Realme UI for Pad",
+          skin: "Realme UI 2.0",
+          wifi: "Wi-Fi 802.11 a/b/g/n/ac, dual-band, Wi-Fi Direct, hotspot",
+          gps: "Yes, with A-GPS, GLONASS, BDS",
+          bluetooth: "5.0, A2DP, LE",
+          nfc: false,
+          infrared: false,
+          usbOtg: "USB Type-C 2.0",
+          headphones: "3.5mm",
+          fm: false,
+          wifiDirect: true,
+          mhl: false,
+          compassMagnetometer: false,
+          proximitySensor: false,
+          accelerometer: true,
+          ambientLightSensor: true,
+          gyroscope: true,
+          barometer: false,
+          temperatureSensor: false,
+        },
+        inventory: [],
+        reviews: [],
+        discounts: [],
+        category: "tablet"
+      },
+      {
+        name: "Samsung Galaxy Tab S8 Ultra",
+        price: 14000000,
+        tabletSpecs: {
+          brand: "Samsung",
+          model: "Galaxy Tab S8 Ultra",
+          launched: "2022, February 9",
+          dimensions: "286.4 x 184.4 x 5.7 mm (11.28 x 7.26 x 0.22 in)",
+          weight: "580 g (Wi-Fi), 585 g (5G) (1.28 lb)",
+          batteryCapacity: "11000 mAh",
+          removableBattery: "No",
+          color: "Phantom Black, Phantom Silver",
+          screenSize: "14.6 inches, 316.9 cm2 (~86.6% screen-to-body ratio)",
+          touchscreen: true,
+          resolution: "1752 x 2800 pixels (~189 ppi density)",
+          ppi: "189",
+          processor: "Octa-core (1x3.2 GHz Cortex-X2 & 3x2.80 GHz Cortex-A710 & 4x1.92 GHz Cortex-A510)",
+          processorMake: "Qualcomm Snapdragon 8 Gen 1+",
+          ram: "8GB",
+          internalStorage: "128GB, 256GB, 512GB",
+          expandableStorage: "microSDXC (dedicated slot)",
+          rearCamera: "13 MP, f/2.0, 26mm (wide), 1/3.4\", 1.0µm, AF",
+          rearFlash: "No",
+          frontCamera: "12 MP, f/2.2, 26mm (wide), 1/3.6\", 1.22µm",
+          operatingSystem: "Android 12, One UI 4.1",
+          skin: "One UI 4.1",
+          wifi: "Wi-Fi 802.11 a/b/g/n/ac/6e, dual-band, Wi-Fi Direct, hotspot",
+          gps: "Yes, with A-GPS, GLONASS, BDS, GALILEO",
+          bluetooth: "5.2, A2DP, LE",
+          nfc: true,
+          infrared: false,
+          usbOtg: "USB Type-C 3.2, magnetic connector",
+          headphones: "No",
+          fm: false,
+          wifiDirect: true,
+          mhl: false,
+          compassMagnetometer: true,
+          proximitySensor: false,
+          accelerometer: true,
+          ambientLightSensor: true,
+          gyroscope: true,
+          barometer: true,
+          temperatureSensor: false,
+        },
+        inventory: [],
+        reviews: [],
+        discounts: [],
+        category: "tablet"
+      },
+      {
+        name: "iPad Air (2023)",
+        price: 9000000,
+        tabletSpecs: {
+          brand: "Apple",
+          model: "iPad Air (2023)",
+          launched: "2023, March 1",
+          dimensions: "247.6 x 178.5 x 6.1 mm (9.75 x 7.03 x 0.24 in)",
+          weight: "460 g (Wi-Fi), 462 g (5G) (1.01 lb)",
+          batteryCapacity: "7606 mAh",
+          removableBattery: "No",
+          color: "Space Gray, Starlight, Pink, Purple, Blue",
+          screenSize: "10.9 inches, 359.2 cm2 (~82.9% screen-to-body ratio)",
+          touchscreen: true,
+          resolution: "1640 x 2360 pixels (~264 ppi density)",
+          ppi: "264",
+          processor: "Octa-core (4x3.23 GHz Firestorm + 4x1.96 GHz Icestorm)",
+          processorMake: "Apple M2",
+          ram: "4GB",
+          internalStorage: "64GB, 256GB",
+          expandableStorage: "No",
+          rearCamera: "12 MP, f/1.8, (wide), 1/3\", PDAF",
+          rearFlash: "Quad-LED dual-tone flash",
+          frontCamera: "12 MP, f/2.4, 122˚ (ultrawide)",
+          video: "4K@24/30/60fps, 1080p@30/60/120/240fps; gyro-EIS",
+          operatingSystem: "iPadOS 17",
+          wifi: "Wi-Fi 802.11 a/b/g/n/ac/6, dual-band, hotspot",
+          gps: "Yes, with A-GPS, GLONASS, GALILEO, QZSS (Wi‑Fi + Cellular model only)",
+          bluetooth: "5.1, A2DP, LE",
+          nfc: false,
+          infrared: false,
+          usbOtg: "USB Type-C 4.0, magnetic connector",
+          headphones: "No",
+          fm: false,
+          wifiDirect: true,
+          mhl: false,
+          compassMagnetometer: true,
+          proximitySensor: false,
+          accelerometer: true,
+          ambientLightSensor: true,
+          gyroscope: true,
+          barometer: false,
+          temperatureSensor: false,
+        },
+        inventory: [],
+        reviews: [],
+        discounts: [],
+        category: "tablet"
+      },{
+        name: "iPad Air (2023)",
+        price: 9000000,
+        tabletSpecs: {
+          brand: "Apple",
+          model: "iPad Air (2023)",
+          launched: "2023, March 1",
+          dimensions: "247.6 x 178.5 x 6.1 mm (9.75 x 7.03 x 0.24 in)",
+          weight: "460 g (Wi-Fi), 462 g (5G) (1.01 lb)",
+          batteryCapacity: "7606 mAh",
+          removableBattery: "No",
+          color: "Space Gray, Starlight, Pink, Purple, Blue",
+          screenSize: "10.9 inches, 359.2 cm2 (~82.9% screen-to-body ratio)",
+          touchscreen: true,
+          resolution: "1640 x 2360 pixels (~264 ppi density)",
+          ppi: "264",
+          processor: "Octa-core (4x3.23 GHz Firestorm + 4x1.96 GHz Icestorm)",
+          processorMake: "Apple M2",
+          ram: "4GB",
+          internalStorage: "64GB, 256GB",
+          expandableStorage: "No",
+          rearCamera: "12 MP, f/1.8, (wide), 1/3\", PDAF",
+          rearFlash: "Quad-LED dual-tone flash",
+          frontCamera: "12 MP, f/2.4, 122˚ (ultrawide)",
+          video: "4K@24/30/60fps, 1080p@30/60/120/240fps; gyro-EIS",
+          operatingSystem: "iPadOS 17",
+          wifi: "Wi-Fi 802.11 a/b/g/n/ac/6, dual-band, hotspot",
+          gps: "Yes, with A-GPS, GLONASS, GALILEO, QZSS (Wi‑Fi + Cellular model only)",
+          bluetooth: "5.1, A2DP, LE",
+          nfc: false,
+          infrared: false,
+          usbOtg: "USB Type-C 4.0, magnetic connector",
+          headphones: "No",
+          fm: false,
+          wifiDirect: true,
+          mhl: false,
+          compassMagnetometer: true,
+          proximitySensor: false,
+          accelerometer: true,
+          ambientLightSensor: true,
+          gyroscope: true,
+          barometer: false,
+          temperatureSensor: false,
+        },
+        inventory: [],
+        reviews: [],
+        discounts: [],
+        category: "tablet"
+      },
+      {
+        name: "Samsung Galaxy Tab S8 Ultra",
+        price: 15000000,
+        tabletSpecs: {
+          brand: "Samsung",
+          model: "Galaxy Tab S8 Ultra",
+          launched: "2023, February 1",
+          dimensions: "287.4 x 185 x 5.5 mm (11.31 x 7.28 x 0.22 in)",
+          weight: "575 g (1.27 lb)",
+          batteryCapacity: "12000 mAh",
+          removableBattery: "No",
+          color: "Mystic Black, Mystic White, Mystic Bronze",
+          screenSize: "14.6 inches, 326.9 cm2 (~85.4% screen-to-body ratio)",
+          touchscreen: true,
+          resolution: "2800 x 1752 pixels (~267 ppi density)",
+          ppi: "267",
+          processor: "Octa-core (1x3.0 GHz Cortex-X2 & 3x2.4 GHz Cortex-A79 & 4x1.8 GHz Cortex-A55)",
+          processorMake: "Qualcomm SM8450 Snapdragon 8 Gen 1 (4 nm)",
+          ram: "8GB",
+          internalStorage: "128GB, 256GB, 512GB",
+          expandableStorage: "Yes, microSDXC (uses shared SIM slot)",
+          rearCamera: "13 MP, f/2.0, 12mm (ultrawide), 1/3.4\", 1.0µm",
+          rearFlash: "LED flash, HDR, panorama",
+          frontCamera: "12 MP, AF, 1080p@30fps",
+          video: "4K@30/60fps, 1080p@30/60fps, gyro-EIS",
+          operatingSystem: "Android 13, One UI 6",
+          wifi: "Wi-Fi 802.11 a/b/g/n/ac/6e, dual-band, Wi-Fi Direct, hotspot",
+          gps: "Yes, with A-GPS, GLONASS, BDS, GALILEO",
+          bluetooth: "5.2, A2DP, LE",
+          nfc: true,
+          infrared: false,
+          usbOtg: "USB Type-C 4.0, magnetic connector",
+          headphones: "No",
+          fm: false,
+          wifiDirect: true,
+          mhl: false,
+          compassMagnetometer: true,
+          proximitySensor: false,
+          accelerometer: true,
+          ambientLightSensor: true,
+          gyroscope: true,
+          barometer: false,
+          temperatureSensor: false,
+        },
+        inventory: [],
+        reviews: [],
+        discounts: [],
+        category: "tablet"
+      },
+      {
+        name: "Huawei MatePad Pro 12.6",
+        price: 13000000,
+        tabletSpecs: {
+          brand: "Huawei",
+          model: "MatePad Pro 12.6",
+          launched: "2023, March 1",
+          dimensions: "286.5 x 184.7 x 6.7 mm (11.28 x 7.27 x 0.26 in)",
+          weight: "609 g (1.34 lb)",
+          batteryCapacity: "10000 mAh",
+          removableBattery: "No",
+          color: "Gray, White, Green",
+          screenSize: "12.6 inches, 320.0 cm2 (~87.2% screen-to-body ratio)",
+          touchscreen: true,
+          resolution: "2560 x 1600 pixels, 16:10 ratio (~240 ppi density)",
+          ppi: "240",
+          processor: "Octa-core (1x3.13 GHz Cortex-A77 & 3x2.54 GHz Cortex-A77 & 4x2.05 GHz Cortex-A55)",
+          processorMake: "HiSilicon Kirin 990 5G (7 nm+)",
+          ram: "8GB",
+          internalStorage: "128GB, 256GB, 512GB",
+          expandableStorage: "No",
+          rearCamera: "13 MP, f/1.8, PDAF",
+          rearFlash: "LED flash, HDR, panorama",
+          frontCamera: "8 MP, f/2.0",
+          video: "4K@30fps, 1080p@30fps",
+          operatingSystem: "HarmonyOS 3.1",
+          wifi: "Wi-Fi 802.11 a/b/g/n/ac/6, dual-band, Wi-Fi Direct, hotspot",
+          gps: "Yes, with A-GPS, GLONASS, BDS, GALILEO",
+          bluetooth: "5.2, A2DP, LE",
+          nfc: true,
+          infrared: false,
+          usbOtg: "USB Type-C 3.1, magnetic connector",
+          headphones: "No",
+          fm: false,
+          wifiDirect: true,
+          mhl: false,
+          compassMagnetometer: true,
+          proximitySensor: false,
+          accelerometer: true,
+          ambientLightSensor: true,
+          gyroscope: true,
+          barometer: false,
+          temperatureSensor: false,
+        },
+        inventory: [],
+        reviews: [],
+        discounts: [],
+        category: "tablet"
+      }
     ];
-
+  
     for (const productData of products) {
-      const { inventory, reviews, discounts, categories, ...product } = productData;
-
+      const { discounts, laptopSpecs, smartphoneSpecs, tabletSpecs, ...product } = productData;
       const newProduct = this.productRepository.create(product);
       await this.productRepository.save(newProduct);
-
-      if (inventory) {
-        const inventoryEntities = inventory.map(item => {
-          const inventoryEntity = new ProductInventory();
-          inventoryEntity.stock = item.stock;
-          inventoryEntity.product = newProduct;
-          return inventoryEntity;
-        });
-        await this.productInventoryRepository.save(inventoryEntities);
+  
+      if (smartphoneSpecs) {
+        const specsSmartphoneEntity = new SpecsSmartphone();
+        Object.assign(specsSmartphoneEntity, smartphoneSpecs);
+        specsSmartphoneEntity.product = newProduct;
+        await this.specsSmartphoneRepository.save(specsSmartphoneEntity);
+        newProduct.smartphoneSpecs = specsSmartphoneEntity;
       }
-
-      if (reviews) {
-        const reviewEntities = await Promise.all(reviews.map(async item => {
-          const user = await this.userRepository.findOne({ where: { id: item.userId } });
-          if (!user) {
-            throw new Error(`User not found: ${item.userId}`);
-          }
-          const reviewEntity = new ProductReviews();
-          reviewEntity.rating = item.rating;
-          reviewEntity.comment = item.comment;
-          reviewEntity.product = newProduct;
-          reviewEntity.user = user;
-          return reviewEntity;
-        }));
-        await this.productReviewsRepository.save(reviewEntities);
+  
+      if (laptopSpecs) {
+        const specsLaptopEntity = new SpecsLaptop();
+        Object.assign(specsLaptopEntity, laptopSpecs);
+        specsLaptopEntity.product = newProduct;
+        await this.specsLaptopRepository.save(specsLaptopEntity);
+        newProduct.laptopSpecs = specsLaptopEntity;
       }
-
-      if (discounts) {
-        const discountEntities = discounts.map(item => {
-          const discountEntity = new Discounts();
-          discountEntity.discount = item.discount;
-          discountEntity.expires_at = new Date(item.expires_at);
-          discountEntity.product = newProduct;
-          return discountEntity;
-        });
-        await this.discountsRepository.save(discountEntities);
+  
+      if (tabletSpecs) {
+        const specsTabletEntity = new SpecsTablet();
+        Object.assign(specsTabletEntity, tabletSpecs);
+        specsTabletEntity.product = newProduct;
+        await this.specsTabletRepository.save(specsTabletEntity);
+        newProduct.tabletSpecs = specsTabletEntity;
       }
-
-      if (categories) {
-        const categoryEntities = await Promise.all(categories.map(async categoryId => {
-          const categoryEntity = await this.productCategoriesRepository.findOne({ where: { id: categoryId } });
-          if (!categoryEntity) {
-            throw new Error(`Category not found: ${categoryId}`);
-          }
-          return categoryEntity;
-        }));
-        newProduct.categories = categoryEntities;
-      }
-
+  
       await this.productRepository.save(newProduct);
     }
   }
+  
 }
+

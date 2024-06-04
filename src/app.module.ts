@@ -21,14 +21,15 @@ import { Coupons } from './entities/orders-related/coupon.entity';
 import { Discounts } from './entities/products-related/discounts.entity';
 import { OrderStatusHistory } from './entities/orders-related/order-status.entity';
 import { Payments } from './entities/orders-related/payments.entity';
-import { ProductCategories } from './entities/products-related/product-categories.entity';
 import { ProductInventory } from './entities/products-related/product-inventory.entity';
 import { ProductReviews } from './entities/products-related/product-reviews.entity';
 import { ShippingDetails } from './entities/orders-related/shipping-details.entity';
 import { UserDetails } from './entities/users-related/user-details.entity';
-import { CategoryModule } from './products/product-categories/product-categories.module';
 import { ProductReviewsModule } from './products/product-review/product-review.module';
 import { CouponsModule } from './orders/coupons/coupons.module';
+import { SpecsLaptop } from './entities/products-related/specs/specs-laptop.entity';
+import { SpecsSmartphone } from './entities/products-related/specs/specs-smartphone.entity';
+import { SpecsTablet } from './entities/products-related/specs/specs-tablet.entity';
 
 @Module({
   imports: [
@@ -40,7 +41,7 @@ import { CouponsModule } from './orders/coupons/coupons.module';
       username: process.env.DB_USERNAME,
       database: process.env.DB_NAME,
       password: process.env.DB_PASSWORD,
-      entities: [User, Product, Order, OrderItem, Cart, CartItem, Address, Coupons, Discounts, OrderStatusHistory, Payments, ProductCategories, ProductInventory, ProductReviews, ShippingDetails, UserDetails],
+      entities: [User, Product, Order, OrderItem, Cart, CartItem, Address, Coupons, Discounts, OrderStatusHistory, Payments, ProductInventory, ProductReviews, ShippingDetails, UserDetails, SpecsLaptop, SpecsSmartphone, SpecsTablet],
       synchronize: true,
     }),
     CacheModule.register({
@@ -48,14 +49,13 @@ import { CouponsModule } from './orders/coupons/coupons.module';
       store: redisStore,
       ttl: 300,
     }),
-    TypeOrmModule.forFeature([User, Product, Order, OrderItem, Cart, CartItem, Address, Coupons, Discounts, OrderStatusHistory, Payments, ProductCategories, ProductInventory, ProductReviews, ShippingDetails, UserDetails]),
+    TypeOrmModule.forFeature([User, Product, Order, OrderItem, Cart, CartItem, Address, Coupons, Discounts, OrderStatusHistory, Payments, ProductInventory, ProductReviews, ShippingDetails, UserDetails, SpecsLaptop, SpecsSmartphone, SpecsTablet]),
     SeederModule,
     UserModule,
     ProductModule,
     OrderModule,
     CartModule,
     ProductReviewsModule,
-    CategoryModule,
     CouponsModule,
     AuthModule
   ],
