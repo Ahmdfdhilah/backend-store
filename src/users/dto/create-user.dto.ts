@@ -1,40 +1,34 @@
-import { IsEmail, ValidateNested } from 'class-validator';
-import { Type } from 'class-transformer';
+import { z } from 'zod';
 
-class CreateAddressDto {
-  street: string;
-  city: string;
-  state: string;
-  postalCode: string;
-}
+const CreateAddressDtoSchema = z.object({
+  street: z.string(),
+  city: z.string(),
+  state: z.string(),
+  postalCode: z.string(),
+});
 
-class CreateUserDetailsDto {
-  firstName: string;
-  lastName: string;
-  fullName: string;
-  phone: string;
-  country: string;
-}
+const CreateUserDetailsDtoSchema = z.object({
+  firstName: z.string(),
+  lastName: z.string(),
+  fullName: z.string(),
+  phone: z.string(),
+  country: z.string(),
+});
 
-class CreateReviewDto {
-  rating: number;
-  comment: string;
-  productId: string;
-}
+const CreateReviewDtoSchema = z.object({
+  rating: z.number().int().min(1).max(5),
+  comment: z.string(),
+  productId: z.string(),
+});
 
-export class CreateUserDto {
-  username: string;
-  @IsEmail()
-  email: string;
-  password: string;
-  @ValidateNested({ each: true })
-  @Type(() => CreateAddressDto)
-  addresses?: CreateAddressDto[];
-  @ValidateNested({ each: true })
-  @Type(() => CreateUserDetailsDto)
-  details?: CreateUserDetailsDto[];
-  userRole?: string;
-  @ValidateNested({ each: true })
-  @Type(() => CreateReviewDto)
-  reviews?: CreateReviewDto[];
-}
+export const CreateUserDtoSchema = z.object({
+  username: z.string(),
+  email: z.string().email(),
+  password: z.string(),
+  addresses: z.array(CreateAddressDtoSchema).optional(),
+  details: z.array(CreateUserDetailsDtoSchema).optional(),
+  userRole: z.string().optional(),
+  reviews: z.array(CreateReviewDtoSchema).optional(),
+});
+
+export type CreateUserDto = z.infer<typeof CreateUserDtoSchema>;

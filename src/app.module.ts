@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { CacheModule } from '@nestjs/cache-manager';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
@@ -17,7 +17,6 @@ import { OrderItem } from './entities/orders-related/order-item.entity';
 import { SeederService } from './seeder/seeder.service';
 import { AuthModule } from './auth/auth.module';
 import { Address } from './entities/users-related/address.entity';
-import { Coupons } from './entities/orders-related/coupon.entity';
 import { Discounts } from './entities/products-related/discounts.entity';
 import { OrderStatusHistory } from './entities/orders-related/order-status.entity';
 import { Payments } from './entities/orders-related/payments.entity';
@@ -26,22 +25,28 @@ import { ProductReviews } from './entities/products-related/product-reviews.enti
 import { ShippingDetails } from './entities/orders-related/shipping-details.entity';
 import { UserDetails } from './entities/users-related/user-details.entity';
 import { ProductReviewsModule } from './products/product-review/product-review.module';
-import { CouponsModule } from './orders/coupons/coupons.module';
 import { SpecsLaptop } from './entities/products-related/specs/specs-laptop.entity';
 import { SpecsSmartphone } from './entities/products-related/specs/specs-smartphone.entity';
 import { SpecsTablet } from './entities/products-related/specs/specs-tablet.entity';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { RateLimiterMiddleware } from './security/rate-limiter.middleware';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
+    ThrottlerModule.forRoot([{
+      ttl: 60,
+      limit: 10,
+    }]),
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.DB_HOST,
       port: +process.env.DB_PORT,
       username: process.env.DB_USERNAME,
       database: process.env.DB_NAME,
-      password: process.env.DB_PASSWORD,
-      entities: [User, Product, Order, OrderItem, Cart, CartItem, Address, Coupons, Discounts, OrderStatusHistory, Payments, ProductInventory, ProductReviews, ShippingDetails, UserDetails, SpecsLaptop, SpecsSmartphone, SpecsTablet],
+      // password: process.env.DB_PASSWORD,
+      entities: [User, Product, Order, OrderItem, Cart, CartItem, Address,  Discounts, OrderStatusHistory, Payments, ProductInventory, ProductReviews, ShippingDetails, UserDetails, SpecsLaptop, SpecsSmartphone, SpecsTablet],
       synchronize: true,
     }),
     CacheModule.register({
@@ -49,21 +54,31 @@ import { SpecsTablet } from './entities/products-related/specs/specs-tablet.enti
       store: redisStore,
       ttl: 300,
     }),
-    TypeOrmModule.forFeature([User, Product, Order, OrderItem, Cart, CartItem, Address, Coupons, Discounts, OrderStatusHistory, Payments, ProductInventory, ProductReviews, ShippingDetails, UserDetails, SpecsLaptop, SpecsSmartphone, SpecsTablet]),
+    TypeOrmModule.forFeature([User, Product, Order, OrderItem, Cart, CartItem, Address, Discounts, OrderStatusHistory, Payments, ProductInventory, ProductReviews, ShippingDetails, UserDetails, SpecsLaptop, SpecsSmartphone, SpecsTablet]),
     SeederModule,
     UserModule,
     ProductModule,
     OrderModule,
     CartModule,
     ProductReviewsModule,
-    CouponsModule,
     AuthModule
   ],
   controllers: [],
-  providers: [SeederService],
+  providers: [
+    SeederService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule {
   constructor(private readonly seederService: SeederService) {
     this.seederService.seed();
+  }
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(RateLimiterMiddleware)
+      .forRoutes('auth/login'); 
   }
 }

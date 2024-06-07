@@ -1,62 +1,45 @@
-import { NotEmpty, IsUUID, IsInt, ValidateNested } from 'class-validator';
-import { Type } from 'class-transformer';
+import { z } from 'zod';
 
-export class CreateOrderItemDto {
-  @IsUUID()
-  productId: string;
+export const CreateOrderItemDtoSchema = z.object({
+  productId: z.string(),  
+  quantity: z.number(),   
+});
 
-  @IsInt()
-  quantity: number;
-}
+export const CreateOrderStatusDtoSchema = z.object({
+  status: z.string(),         
+  updated_at: z.date(),     
+});
 
-export class CreateOrderStatusDto {
-  status: string;
+export const CreateShippingDetailsDtoSchema = z.object({
+  address: z.string(),        
+  city: z.string(),           
+  postalCode: z.string(),     
+  country: z.string(),        
+});
 
-  @NotEmpty()
-  updated_at: Date;
-}
+export const CreatePaymentsDtoSchema = z.object({
+  amount: z.number(),         
+  method: z.string(),         
+  status: z.string(),         
+  paid_at: z.date(),        
+});
 
-export class CreateShippingDetailsDto {
-  address: string;
-  city: string;
-  postalCode: string;
-  country: string;
-}
+export const CreatePriceShippingDtoSchema = z.object({
+  origin: z.string(),         
+  destination: z.string(),    
+  weight: z.number(),         
+  courier: z.string(),        
+});
 
-export class CreatePaymentsDto {
-  @IsInt()
-  amount: number;
+export const CreateOrderDtoSchema = z.object({
+  userId: z.string(),              
+  total: z.number(),               
+  couponsId: z.string().optional(),          
+  items: z.array(CreateOrderItemDtoSchema),    
+  statusHistory: z.array(CreateOrderStatusDtoSchema),
+  shippingDetails: CreateShippingDetailsDtoSchema,  
+  payments: z.array(CreatePaymentsDtoSchema), 
+});
 
-  @IsUUID()
-  method: string;
-
-  status: string;
-
-  @NotEmpty()
-  paid_at: Date;
-}
-
-export class CreateOrderDto {
-  @IsUUID()
-  userId: string;
-
-  @IsInt()
-  total: number;
-  couponsId?: string;
-
-  @ValidateNested({ each: true })
-  @Type(() => CreateOrderItemDto)
-  items: CreateOrderItemDto[];
-
-  @ValidateNested({ each: true })
-  @Type(() => CreateOrderStatusDto)
-  statusHistory: CreateOrderStatusDto[];
-
-  @ValidateNested({ each: true })
-  @Type(() => CreateShippingDetailsDto)
-  shippingDetails: CreateShippingDetailsDto[];
-
-  @ValidateNested({ each: true })
-  @Type(() => CreatePaymentsDto)
-  payments: CreatePaymentsDto[];
-}
+export type CreateOrderDto = z.infer<typeof CreateOrderDtoSchema>;
+export type CreatePriceShippingDto = z.infer<typeof CreatePriceShippingDtoSchema>;

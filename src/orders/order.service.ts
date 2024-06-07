@@ -8,14 +8,14 @@ import { ShippingDetails } from '../entities/orders-related/shipping-details.ent
 import { Payments } from '../entities/orders-related/payments.entity';
 import { Product } from '../entities/products-related/product.entity';
 import { User } from '../entities/users-related/user.entity';
-import { CreateOrderDto } from './dto/create-order.dto';
+import { CreateOrderDto, CreatePriceShippingDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { plainToClass, classToPlain } from 'class-transformer';
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import midtransClient from 'midtrans-client';
-import { Coupons } from 'src/entities/orders-related/coupon.entity';
-
+import axios
+ from 'axios';
 @Injectable()
 export class OrderService {
   private readonly logger = new Logger(OrderService.name);
@@ -29,7 +29,6 @@ export class OrderService {
     @InjectRepository(Payments) private readonly paymentsRepository: Repository<Payments>,
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     @InjectRepository(Product) private readonly productRepository: Repository<Product>,
-    @InjectRepository(Coupons) private readonly couponsRepository: Repository<Coupons>,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {
     this.snap = new midtransClient.Snap({
@@ -74,12 +73,21 @@ export class OrderService {
   }
 
   async create(createOrderDto: CreateOrderDto): Promise<any> {
-    const { userId, items, statusHistory, shippingDetails, couponsId } = createOrderDto;
+    const { userId, items, statusHistory, shippingDetails } = createOrderDto;
   
-    const user = await this.userRepository.findOne({ where: { id: userId }, relations: ['details'] });
+    const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
       throw new NotFoundException('User not found');
     }
+  
+    const order = new Order();
+    order.user = user;
+    order.items = [];
+    order.statusHistory = [];
+    order.shippingDetails = null;
+    order.total = 0;
+  
+    const savedOrder = await this.orderRepository.save(order);
   
     const orderItems = await Promise.all(items.map(async item => {
       const product = await this.productRepository.findOne({ where: { id: item.productId } });
@@ -89,64 +97,56 @@ export class OrderService {
       const orderItem = this.orderItemRepository.create({
         product,
         quantity: item.quantity,
+        order: savedOrder
       });
-      return orderItem;
+      return await this.orderItemRepository.save(orderItem);
     }));
   
-    const total = orderItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
-    // let discounted = 0;
-    // let coupon: Coupons | null = null;
+    savedOrder.items = orderItems;
   
-    // if (couponsId) {
-    //   coupon = await this.couponsRepository.findOne({ where: { id: couponsId } });
-    //   if (coupon) {
-    //     discounted = (total * coupon.discount) / 100;
-    //     console.log("Coupon found");
-    //   } else {
-    //     console.log("Coupon not found");
-    //     coupon = null;
-    //   }
-    // }
+    const total = orderItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
   
     const orderStatusHistories = statusHistory.map(status => {
-      return this.orderStatusHistoryRepository.create({
+      const orderStatus = this.orderStatusHistoryRepository.create({
         status: status.status,
         updated_at: new Date(status.updated_at),
+        order: savedOrder
       });
+      return orderStatus;
     });
   
-    const orderShippingDetails = shippingDetails.map(details => {
-      return this.shippingDetailsRepository.create({
-        address: details.address,
-        city: details.city,
-        postalCode: details.postalCode,
-        country: details.country,
-      });
+    await this.orderStatusHistoryRepository.save(orderStatusHistories);
+    savedOrder.statusHistory = orderStatusHistories;
+  
+    const orderShippingDetails = this.shippingDetailsRepository.create({
+      address: shippingDetails.address,
+      city: shippingDetails.city,
+      postalCode: shippingDetails.postalCode,
+      country: shippingDetails.country,
+      order: savedOrder
     });
+  
+    await this.shippingDetailsRepository.save(orderShippingDetails);
+    savedOrder.shippingDetails = orderShippingDetails;
+  
+    savedOrder.total = total;
+  
+    await this.orderRepository.save(savedOrder);
   
     const orderPayments = this.paymentsRepository.create({
       amount: total,
       status: 'pending',
       paid_at: new Date(),
+      order: savedOrder
     });
   
-    const order = this.orderRepository.create({
-      user,
-      items: orderItems,
-      statusHistory: orderStatusHistories,
-      shippingDetails: orderShippingDetails,
-      payments: [orderPayments],
-      total: total,
-    });
+    await this.paymentsRepository.save(orderPayments);
+    savedOrder.payments = [orderPayments];
   
-    const newOrder = await this.orderRepository.save(order);
     try {
-      const userDetails = user.details[0];
-      console.log('User Details:', userDetails);
-  
       const transactionPayload = {
         transaction_details: {
-          order_id: newOrder.id,
+          order_id: savedOrder.id,
           gross_amount: total,
         },
         customer_details: {
@@ -159,9 +159,9 @@ export class OrderService {
             last_name: user.details?.[0]?.lastName,
             phone: user.details?.[0]?.phone,
             email: user.email,
-            address: orderShippingDetails?.[0]?.address,
-            city: orderShippingDetails?.[0]?.city,
-            postal_code: orderShippingDetails?.[0]?.postalCode,
+            address: orderShippingDetails.address,
+            city: orderShippingDetails.city,
+            postal_code: orderShippingDetails.postalCode,
             country_code: user.details?.[0]?.country
           }
         },
@@ -173,11 +173,9 @@ export class OrderService {
         })),
       };
   
-      console.log('Transaction Payload:', transactionPayload);
-  
       const transaction = await this.snap.createTransaction(transactionPayload);
-      newOrder.snapToken = transaction.token;
-      await this.orderRepository.save(newOrder);
+      savedOrder.snapToken = transaction.token;
+      await this.orderRepository.save(savedOrder);
       orderPayments.link_payment = transaction.redirect_url;
       await this.paymentsRepository.save(orderPayments);
   
@@ -186,7 +184,7 @@ export class OrderService {
   
       return {
         order: await this.orderRepository.findOne({
-          where: { id: newOrder.id },
+          where: { id: savedOrder.id },
           relations: ['items', 'items.product', 'statusHistory', 'shippingDetails', 'payments'],
         }),
         paymentUrl: transaction.redirect_url,
@@ -198,7 +196,6 @@ export class OrderService {
     }
   }
   
-
   async update(id: string, updateOrderDto: UpdateOrderDto): Promise<Order> {
     const { userId, items, statusHistory, shippingDetails, couponsId } = updateOrderDto;
 
@@ -253,28 +250,20 @@ export class OrderService {
 
     if (shippingDetails) {
       await this.shippingDetailsRepository.delete({ order });
-      const orderShippingDetails = shippingDetails.map(details => {
-        return this.shippingDetailsRepository.create({
-          address: details.address,
-          city: details.city,
-          postalCode: details.postalCode,
-          country: details.country,
-          order,
-        });
+      const orderShippingDetails = this.shippingDetailsRepository.create({
+        address: shippingDetails.address,
+        city: shippingDetails.city,
+        postalCode: shippingDetails.postalCode,
+        country: shippingDetails.country,
+        order,
       });
+      await this.shippingDetailsRepository.save(orderShippingDetails);
       order.shippingDetails = orderShippingDetails;
-      for (const shippingDetail of orderShippingDetails) {
-        await this.shippingDetailsRepository.save(shippingDetail);
-      }
-    }
-
-    if (items) {
-      order.total = order.items.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
     }
 
     await this.orderRepository.save(order);
-    await this.cacheManager.del(`order_${id}`);
     await this.cacheManager.del('orders');
+    this.logger.log(`Cleared cache for order ${id}`);
     return order;
   }
 
@@ -283,14 +272,120 @@ export class OrderService {
     if (!order) {
       throw new NotFoundException(`Order with ID ${id} not found`);
     }
-    await this.orderItemRepository.delete({ order });
-    await this.orderStatusHistoryRepository.delete({ order });
-    await this.shippingDetailsRepository.delete({ order });
-    await this.paymentsRepository.delete({ order });
+    console.log(order)
+ 
+    await this.orderItemRepository.delete({ order }); 
+    await this.orderStatusHistoryRepository.delete({ order }); 
+    await this.paymentsRepository.delete({ order }); 
+
+    if (order.shippingDetails) {
+      order.shippingDetails = null;
+      await this.orderRepository.save(order);
+    }
+
+    if (order.shippingDetails && order.shippingDetails.id) {
+      await this.shippingDetailsRepository.delete(order.shippingDetails.id);
+    }
 
     await this.orderRepository.delete(id);
     this.logger.log(`Order removed with ID: ${id}`);
     await this.cacheManager.del('orders');
     await this.cacheManager.del(`order_${id}`);
   }
+
+  async getStatus(orderId: string): Promise<any> {
+    const url = `https://api.sandbox.midtrans.com/v2/${orderId}/status`;
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Basic ${Buffer.from(process.env.MIDTRANS_SERVER_KEY).toString('base64')}`,
+    };
+  
+    try {
+      const response = await axios.get(url, { headers });
+      return response.data;
+    } catch (error) {
+      this.logger.error('Error getting Midtrans status:', error);
+      throw new Error('Failed to get Midtrans status');
+    }
+  }
+
+  async getProvince(): Promise<any>{
+    const url = `https://api.rajaongkir.com/starter/province/`;
+    const headers =  {
+      key: '1306e862fb71c2c95e6f40cb6400cbb4',
+    }
+    try{
+      const response = await axios.get(url, {headers})
+      return response.data.rajaongkir.results;
+    }
+    catch(error){
+      throw new Error('failed to get province')
+    }
+  }
+
+  async getProvinceById(id: string): Promise<any>{
+    const url = `https://api.rajaongkir.com/starter/province?id=${id}`;
+    const headers =  {
+      key: '1306e862fb71c2c95e6f40cb6400cbb4',
+    }
+    try{
+      const response = await axios.get(url, {headers})
+      return response.data.rajaongkir.results;
+    }
+    catch(error){
+      throw new Error('failed to get province')
+    }
+  }
+
+  async getCity(): Promise<any>{
+    const url = `https://api.rajaongkir.com/starter/city/`;
+    const headers =  {
+      key: '1306e862fb71c2c95e6f40cb6400cbb4',
+    }
+    try{
+      const response = await axios.get(url, {headers})
+      return response.data.rajaongkir.results;
+    }
+    catch(error){
+      throw new Error('failed to get province')
+    }
+  }
+
+  async getCityById(id: string): Promise<any>{
+    const url = `https://api.rajaongkir.com/starter/city?id=${id}`;
+    const headers =  {
+      key: '1306e862fb71c2c95e6f40cb6400cbb4',
+    }
+    try{
+      const response = await axios.get(url, {headers})
+      return response.data.rajaongkir.results;
+    }
+    catch(error){
+      throw new Error('failed to get province')
+    }
+  }
+  async getPrice(createPriceShipping: CreatePriceShippingDto): Promise<any> {
+    const {origin, destination, weight, courier} = createPriceShipping;
+    const url = `https://api.rajaongkir.com/starter/cost`;
+    const headers = {
+      key: '1306e862fb71c2c95e6f40cb6400cbb4',
+      'Content-Type': 'application/x-www-form-urlencoded',
+    };
+    const data = {
+      origin,
+      destination,
+      weight,
+      courier,
+    };
+    try {
+      const response = await axios.post(url, data, { headers });
+      return response.data.rajaongkir.results;
+    } catch (error) {
+      throw new Error('Failed to get price');
+    }
+  }
 }
+
+
+
+

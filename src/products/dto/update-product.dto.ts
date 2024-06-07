@@ -1,161 +1,148 @@
-import { ValidateNested } from 'class-validator';
-import { Type } from 'class-transformer';
+import { z } from 'zod';
 
-class UpdateInventoryDto {
-  stock: number;
-}
+const UpdateInventoryDtoSchema = z.object({
+  stock: z.number(),
+});
 
-class UpdateReviewDto {
-  rating?: number;
-  comment?: string;
-  userId?: string;
-}
+const UpdateReviewDtoSchema = z.object({
+  rating: z.number().optional(),
+  comment: z.string().optional(),
+  userId: z.string().optional(),
+});
 
-class UpdateDiscountDto {
-  discount: number;
-  expires_at: string;
-}
+const UpdateDiscountDtoSchema = z.object({
+  discount: z.number(),
+  expires_at: z.string(),
+});
 
+const UpdateSpecsSmartphoneDtoSchema = z.object({
+  brand: z.string().optional(),
+  model: z.string().optional(),
+  company: z.string().optional(),
+  os: z.string().optional(),
+  chipset: z.string().optional(),
+  cpu: z.string().optional(),
+  gpu: z.string().optional(),
+  cardSlot: z.boolean().optional(),
+  internal: z.string().optional(),
+  dualCamera: z.string().optional(),
+  features: z.string().optional(),
+  dualVideo: z.string().optional(),
+  singleCamera: z.string().optional(),
+  singleVideo: z.string().optional(),
+  loudspeaker: z.boolean().optional(),
+  wlan: z.string().optional(),
+  bluetooth: z.string().optional(),
+  positioning: z.string().optional(),
+  nfc: z.boolean().optional(),
+  infraredPort: z.boolean().optional(),
+  radio: z.boolean().optional(),
+  usb: z.string().optional(),
+  batteryType: z.string().optional(),
+  charging: z.string().optional(),
+  color: z.string().optional(),
+  screenType: z.string().optional(),
+  screenSize: z.string().optional(),
+  resolution: z.string().optional(),
+  dimensions: z.string().optional(),
+  weight: z.string().optional(),
+  build: z.string().optional(),
+  sim: z.string().optional(),
+});
 
-export class UpdateSpecsSmartphoneDto {
-  brand?: string;
-  model?: string;
-  company?: string;
-  os?: string;
-  chipset?: string;
-  cpu?: string;
-  gpu?: string;
-  cardSlot?: boolean;
-  internal?: string;
-  dualCamera?: string;
-  features?: string;
-  dualVideo?: string;
-  singleCamera?: string;
-  singleVideo?: string;
-  loudspeaker?: boolean;
-  wlan?: string;
-  bluetooth?: string;
-  positioning?: string;
-  nfc?: boolean;
-  infraredPort?: boolean;
-  radio?: boolean;
-  usb?: string;
-  batteryType?: string;
-  charging?: string;
-  color?: string;
-  screenType?: string;
-  screenSize?: string;
-  resolution?: string;
-  dimensions?: string;
-  weight?: string;
-  build?: string;
-  sim?: string;
-}
+const UpdateSpecsLaptopDtoSchema = z.object({
+  brand: z.string().optional(),
+  model: z.string().optional(),
+  company: z.string().optional(),
+  ram: z.string().optional(),
+  size: z.string().optional(),
+  ssd: z.string().optional(),
+  color: z.array(z.string()).optional(),
+  operatingSystem: z.string().optional(),
+  hardDisk: z.string().optional(),
+  modelNumber: z.string().optional(),
+  processor: z.string().optional(),
+  graphicsProcessor: z.string().optional(),
+  dedicatedGraphics: z.string().optional(),
+  fingerprintSensor: z.string().optional(),
+  resolution: z.string().optional(),
+  wifiStandardsSupported: z.string().optional(),
+  weight: z.string().optional(),
+  dimensions: z.string().optional(),
+  bluetoothVersion: z.string().optional(),
+  numberOfUSBPorts: z.string().optional(),
+  series: z.string().optional(),
+  internalMic: z.string().optional(),
+  touchScreen: z.string().optional(),
+  baseClockSpeed: z.string().optional(),
+  productName: z.string().optional(),
+  touchpad: z.string().optional(),
+  batteryCell: z.string().optional(),
+  pointerDevice: z.string().optional(),
+  cache: z.string().optional(),
+  micIn: z.string().optional(),
+  speakers: z.string().optional(),
+  multiCardSlot: z.string().optional(),
+  rj45LAN: z.string().optional(),
+  hdmiPort: z.string().optional(),
+  ethernet: z.string().optional(),
+  batteryLife: z.string().optional(),
+  dedicatedGraphicMemoryType: z.string().optional(),
+  expandableRAM: z.string().optional(),
+});
 
-export class UpdateSpecsLaptopDto {
-  brand?: string;
-  model?: string;
-  company?: string;
-  ram?: string;
-  size?: string;
-  ssd?: string;
-  color?: string[];
-  operatingSystem?: string;
-  hardDisk?: string;
-  modelNumber?: string;
-  processor?: string;
-  graphicsProcessor?: string;
-  dedicatedGraphics?: string;
-  fingerprintSensor?: string;
-  resolution?: string;
-  wifiStandardsSupported?: string;
-  weight?: string;
-  dimensions?: string;
-  bluetoothVersion?: string;
-  numberOfUSBPorts?: string;
-  series?: string;
-  internalMic?: string;
-  touchScreen?: string;
-  baseClockSpeed?: string;
-  productName?: string;
-  touchpad?: string;
-  batteryCell?: string;
-  pointerDevice?: string;
-  cache?: string;
-  micIn?: string;
-  speakers?: string;
-  multiCardSlot?: string;
-  rj45LAN?: string;
-  hdmiPort?: string;
-  ethernet?: string;
-  batteryLife?: string;
-  dedicatedGraphicMemoryType?: string;
-  expandableRAM?: string;
-}
+const UpdateSpecsTabletDtoSchema = z.object({
+  brand: z.string().optional(),
+  model: z.string().optional(),
+  launched: z.string().optional(),
+  dimensions: z.string().optional(),
+  weight: z.string().optional(),
+  batteryCapacity: z.string().optional(),
+  removableBattery: z.string().optional(),
+  color: z.string().optional(),
+  screenSize: z.string().optional(),
+  touchscreen: z.boolean().optional(),
+  resolution: z.string().optional(),
+  ppi: z.string().optional(),
+  processor: z.string().optional(),
+  processorMake: z.string().optional(),
+  ram: z.string().optional(),
+  internalStorage: z.string().optional(),
+  expandableStorage: z.string().optional(),
+  rearCamera: z.string().optional(),
+  rearFlash: z.string().optional(),
+  frontCamera: z.string().optional(),
+  operatingSystem: z.string().optional(),
+  skin: z.string().optional(),
+  wifi: z.string().optional(),
+  gps: z.string().optional(),
+  bluetooth: z.string().optional(),
+  nfc: z.boolean().optional(),
+  infrared: z.boolean().optional(),
+  usbOtg: z.string().optional(),
+  headphones: z.string().optional(),
+  fm: z.boolean().optional(),
+  wifiDirect: z.boolean().optional(),
+  mhl: z.boolean().optional(),
+  compassMagnetometer: z.boolean().optional(),
+  proximitySensor: z.boolean().optional(),
+  accelerometer: z.boolean().optional(),
+  ambientLightSensor: z.boolean().optional(),
+  gyroscope: z.boolean().optional(),
+  barometer: z.boolean().optional(),
+  temperatureSensor: z.boolean().optional(),
+});
 
-export class UpdateSpecsTabletDto {
-  brand?: string;
-  model?: string;
-  launched?: string;
-  dimensions?: string;
-  weight?: string;
-  batteryCapacity?: string;
-  removableBattery?: string;
-  color?: string;
-  screenSize?: string;
-  touchscreen?: boolean;
-  resolution?: string;
-  ppi?: string;
-  processor?: string;
-  processorMake?: string;
-  ram?: string;
-  internalStorage?: string;
-  expandableStorage?: string;
-  rearCamera?: string;
-  rearFlash?: string;
-  frontCamera?: string;
-  operatingSystem?: string;
-  skin?: string;
-  wifi?: string;
-  gps?: string;
-  bluetooth?: string;
-  nfc?: boolean;
-  infrared?: boolean;
-  usbOtg?: string;
-  headphones?: string;
-  fm?: boolean;
-  wifiDirect?: boolean;
-  mhl?: boolean;
-  compassMagnetometer?: boolean;
-  proximitySensor?: boolean;
-  accelerometer?: boolean;
-  ambientLightSensor?: boolean;
-  gyroscope?: boolean;
-  barometer?: boolean;
-  temperatureSensor?: boolean;
-}
+export const UpdateProductDtoSchema = z.object({
+  name: z.string().optional(),
+  price: z.number().optional(),
+  inventory: z.array(UpdateInventoryDtoSchema).optional(),
+  reviews: z.array(UpdateReviewDtoSchema).optional(),
+  discounts: z.array(UpdateDiscountDtoSchema).optional(),
+  category: z.string().optional(),
+  smartphoneSpecs: UpdateSpecsSmartphoneDtoSchema.optional(),
+  laptopSpecs: UpdateSpecsLaptopDtoSchema.optional(),
+  tabletSpecs: UpdateSpecsTabletDtoSchema.optional(),
+});
 
-export class UpdateProductDto {
-  name: string;
-  price: number;
-
-  @ValidateNested({ each: true })
-  @Type(() => UpdateInventoryDto)
-  inventory: UpdateInventoryDto[];
-
-  @ValidateNested({ each: true })
-  @Type(() => UpdateReviewDto)
-  reviews: UpdateReviewDto[];
-
-  @ValidateNested({ each: true })
-  @Type(() => UpdateDiscountDto)
-  discounts: UpdateDiscountDto[];
-
-  category: string;
-  @Type(() => UpdateSpecsSmartphoneDto)
-  smartphoneSpecs?: UpdateSpecsSmartphoneDto;
-  @Type(() => UpdateSpecsLaptopDto)
-  laptopSpecs?: UpdateSpecsLaptopDto;
-  @Type(() => UpdateSpecsTabletDto)
-  tabletSpecs?: UpdateSpecsTabletDto;
-}
+export type UpdateProductDto = z.infer<typeof UpdateProductDtoSchema>;

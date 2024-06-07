@@ -1,10 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, ManyToOne, OneToMany, Column, ManyToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, ManyToOne, OneToMany, Column, ManyToMany, OneToOne, JoinColumn } from 'typeorm';
 import { User } from '../users-related/user.entity';
 import { OrderItem } from './order-item.entity';
 import { OrderStatusHistory } from './order-status.entity';
 import { ShippingDetails } from './shipping-details.entity';
 import { Payments } from './payments.entity';
-import { Coupons } from './coupon.entity';
 
 @Entity()
 export class Order {
@@ -26,12 +25,11 @@ export class Order {
   @OneToMany(() => OrderStatusHistory, orderStatusHistory => orderStatusHistory.order, {cascade: true})
   statusHistory: OrderStatusHistory[];
 
-  @OneToMany(() => ShippingDetails, shippingDetails => shippingDetails.order, {cascade:true})
-  shippingDetails: ShippingDetails[];
+  @OneToOne(() => ShippingDetails, shippingDetails => shippingDetails.order, { cascade: true })
+  @JoinColumn()
+  shippingDetails: ShippingDetails;
 
   @OneToMany(() => Payments, payments => payments.order, {cascade:true})
   payments: Payments[];
 
-  @ManyToOne(() => Coupons, coupons => coupons.orders, { nullable: true })
-  coupons: Coupons;
 }

@@ -1,162 +1,149 @@
-import {  ValidateNested } from 'class-validator';
-import { Type } from 'class-transformer';
+import { z } from 'zod';
 
+const CreateInventoryDtoSchema = z.object({
+  stock: z.number(),
+});
 
-class CreateInventoryDto {
-  stock: number;
-}
+const CreateReviewDtoSchema = z.object({
+  rating: z.number(),
+  comment: z.string(),
+  userId: z.string(),
+});
 
-class CreateReviewDto {
-  rating: number;
-  comment: string;
-  userId: string;
-}
+const CreateDiscountDtoSchema = z.object({
+  discount: z.number(),
+  expires_at: z.string(),
+});
 
-class CreateDiscountDto {
-  discount: number;
-  expires_at: string;
-}
+const CreateSpecsSmartphoneDtoSchema = z.object({
+  brand: z.string(),
+  model: z.string(),
+  company: z.string(),
+  os: z.string(),
+  chipset: z.string(),
+  cpu: z.string(),
+  gpu: z.string(),
+  cardSlot: z.boolean(),
+  internal: z.string(),
+  dualCamera: z.string(),
+  features: z.string(),
+  dualVideo: z.string(),
+  singleCamera: z.string(),
+  singleVideo: z.string(),
+  loudspeaker: z.boolean(),
+  wlan: z.string(),
+  bluetooth: z.string(),
+  positioning: z.string(),
+  nfc: z.boolean(),
+  infraredPort: z.boolean(),
+  radio: z.boolean(),
+  usb: z.string(),
+  batteryType: z.string(),
+  charging: z.string(),
+  color: z.string(),
+  screenType: z.string(),
+  screenSize: z.string(),
+  resolution: z.string(),
+  dimensions: z.string(),
+  weight: z.string(),
+  build: z.string(),
+  sim: z.string(),
+});
 
+const CreateSpecsLaptopDtoSchema = z.object({
+  brand: z.string(),
+  model: z.string(),
+  company: z.string(),
+  ram: z.string(),
+  size: z.string(),
+  ssd: z.string(),
+  color: z.array(z.string()),
+  operatingSystem: z.string(),
+  hardDisk: z.string(),
+  modelNumber: z.string(),
+  processor: z.string(),
+  graphicsProcessor: z.string(),
+  dedicatedGraphics: z.string(),
+  fingerprintSensor: z.string(),
+  resolution: z.string(),
+  wifiStandardsSupported: z.string(),
+  weight: z.string(),
+  dimensions: z.string(),
+  bluetoothVersion: z.string(),
+  numberOfUSBPorts: z.string(),
+  series: z.string(),
+  internalMic: z.string(),
+  touchScreen: z.string(),
+  baseClockSpeed: z.string(),
+  productName: z.string(),
+  touchpad: z.string(),
+  batteryCell: z.string(),
+  pointerDevice: z.string(),
+  cache: z.string(),
+  micIn: z.string(),
+  speakers: z.string(),
+  multiCardSlot: z.string(),
+  rj45LAN: z.string(),
+  hdmiPort: z.string(),
+  ethernet: z.string(),
+  batteryLife: z.string(),
+  dedicatedGraphicMemoryType: z.string(),
+  expandableRAM: z.string(),
+});
 
-export class CreateSpecsSmartphoneDto {
-  brand: string;
-  model: string;
-  company: string;
-  os: string;
-  chipset: string;
-  cpu: string;
-  gpu: string;
-  cardSlot: boolean;
-  internal: string;
-  dualCamera: string;
-  features: string;
-  dualVideo: string;
-  singleCamera: string;
-  singleVideo: string;
-  loudspeaker: boolean;
-  wlan: string;
-  bluetooth: string;
-  positioning: string;
-  nfc: boolean;
-  infraredPort: boolean;
-  radio: boolean;
-  usb: string;
-  batteryType: string;
-  charging: string;
-  color: string;
-  screenType: string;
-  screenSize: string;
-  resolution: string;
-  dimensions: string;
-  weight: string;
-  build: string;
-  sim: string;
-}
+const CreateSpecsTabletDtoSchema = z.object({
+  brand: z.string(),
+  model: z.string(),
+  launched: z.string().optional(),
+  dimensions: z.string(),
+  weight: z.string(),
+  batteryCapacity: z.string(),
+  removableBattery: z.string(),
+  color: z.string(),
+  screenSize: z.string(),
+  touchscreen: z.boolean(),
+  resolution: z.string(),
+  ppi: z.string(),
+  processor: z.string(),
+  processorMake: z.string(),
+  ram: z.string(),
+  internalStorage: z.string(),
+  expandableStorage: z.string(),
+  rearCamera: z.string(),
+  rearFlash: z.string(),
+  frontCamera: z.string(),
+  operatingSystem: z.string(),
+  skin: z.string(),
+  wifi: z.string(),
+  gps: z.string(),
+  bluetooth: z.string(),
+  nfc: z.boolean(),
+  infrared: z.boolean(),
+  usbOtg: z.string(),
+  headphones: z.string(),
+  fm: z.boolean(),
+  wifiDirect: z.boolean(),
+  mhl: z.boolean(),
+  compassMagnetometer: z.boolean(),
+  proximitySensor: z.boolean(),
+  accelerometer: z.boolean(),
+  ambientLightSensor: z.boolean(),
+  gyroscope: z.boolean(),
+  barometer: z.boolean(),
+  temperatureSensor: z.boolean(),
+});
 
-export class CreateSpecsLaptopDto {
-  brand: string;
-  model: string;
-  company: string;
-  ram: string;
-  size: string;
-  ssd: string;
-  color: string[];
-  operatingSystem: string;
-  hardDisk: string;
-  modelNumber: string;
-  processor: string;
-  graphicsProcessor: string;
-  dedicatedGraphics: string;
-  fingerprintSensor: string;
-  resolution: string;
-  wifiStandardsSupported: string;
-  weight: string;
-  dimensions: string;
-  bluetoothVersion: string;
-  numberOfUSBPorts: string;
-  series: string;
-  internalMic: string;
-  touchScreen: string;
-  baseClockSpeed: string;
-  productName: string;
-  touchpad: string;
-  batteryCell: string;
-  pointerDevice: string;
-  cache: string;
-  micIn: string;
-  speakers: string;
-  multiCardSlot: string;
-  rj45LAN: string;
-  hdmiPort: string;
-  ethernet: string;
-  batteryLife: string;
-  dedicatedGraphicMemoryType: string;
-  expandableRAM: string;
-}
+export const CreateProductDtoSchema = z.object({
+  name: z.string(),
+  price: z.number(),
+  category: z.string(),
 
-export class CreateSpecsTabletDto {
-  brand: string;
-  model: string;
-  launched?: string;
-  dimensions: string;
-  weight: string;
-  batteryCapacity: string;
-  removableBattery: string;
-  color: string;
-  screenSize: string;
-  touchscreen: boolean;
-  resolution: string;
-  ppi: string;
-  processor: string;
-  processorMake: string;
-  ram: string;
-  internalStorage: string;
-  expandableStorage: string;
-  rearCamera: string;
-  rearFlash: string;
-  frontCamera: string;
-  operatingSystem: string;
-  skin: string;
-  wifi: string;
-  gps: string;
-  bluetooth: string;
-  nfc: boolean;
-  infrared: boolean;
-  usbOtg: string;
-  headphones: string;
-  fm: boolean;
-  wifiDirect: boolean;
-  mhl: boolean;
-  compassMagnetometer: boolean;
-  proximitySensor: boolean;
-  accelerometer: boolean;
-  ambientLightSensor: boolean;
-  gyroscope: boolean;
-  barometer: boolean;
-  temperatureSensor: boolean;
-}
+  inventory: z.array(CreateInventoryDtoSchema),
+  reviews: z.array(CreateReviewDtoSchema),
+  discounts: z.array(CreateDiscountDtoSchema),
+  smartphoneSpecs: CreateSpecsSmartphoneDtoSchema.optional(),
+  laptopSpecs: CreateSpecsLaptopDtoSchema.optional(),
+  tabletSpecs: CreateSpecsTabletDtoSchema.optional(),
+});
 
-export class CreateProductDto {
-  name: string;
-  price: number;
-  category: string;
-
-  @ValidateNested({ each: true })
-  @Type(() => CreateInventoryDto)
-  inventory: CreateInventoryDto[];
-
-  @ValidateNested({ each: true })
-  @Type(() => CreateReviewDto)
-  reviews: CreateReviewDto[];
-
-  @ValidateNested({ each: true })
-  @Type(() => CreateDiscountDto)
-  discounts: CreateDiscountDto[];
-  @Type(() => CreateSpecsSmartphoneDto)
-  smartphoneSpecs?: CreateSpecsSmartphoneDto;
-  @Type(() => CreateSpecsLaptopDto)
-  LaptopSpecs?: CreateSpecsLaptopDto;
-  @Type(() => CreateSpecsTabletDto)
-  tabletSpecs?: CreateSpecsTabletDto;
-  
-}
+export type CreateProductDto = z.infer<typeof CreateProductDtoSchema>;

@@ -65,15 +65,10 @@ export class CartService {
       throw new Error('User not found');
     }
 
-    // Create cart instance
     const cart = this.cartRepository.create({
       user,
     });
-
-    // Save the cart first to generate an ID
     const savedCart = await this.cartRepository.save(cart);
-
-    // Map and save cart items
     const cartItems = await Promise.all(items.map(async itemDto => {
       const product = await this.productRepository.findOne({ where: { id: itemDto.productId } });
       if (!product) {
@@ -178,7 +173,6 @@ export class CartService {
 
   async remove(id: string): Promise<void> {
     const cart = await this.cartRepository.findOne({ where: { id }, relations: ['items'] });
-
     if (cart) {
       await this.cartItemRepository.delete({ cart }); 
       await this.cartRepository.delete(id);

@@ -12,6 +12,7 @@ import { User } from 'src/entities/users-related/user.entity';
 import { SpecsLaptop } from 'src/entities/products-related/specs/specs-laptop.entity';
 import { SpecsSmartphone } from 'src/entities/products-related/specs/specs-smartphone.entity';
 import { SpecsTablet } from 'src/entities/products-related/specs/specs-tablet.entity';
+import { UserModule } from 'src/users/user.module';
 
 @Module({
   imports: [
@@ -26,7 +27,7 @@ import { SpecsTablet } from 'src/entities/products-related/specs/specs-tablet.en
       ProductInventory,
       Discounts,
       User
-    ]),
+    ])
   ],
   controllers: [ProductController],
   providers: [ProductService],

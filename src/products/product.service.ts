@@ -11,9 +11,12 @@ import { SpecsLaptop } from 'src/entities/products-related/specs/specs-laptop.en
 import { SpecsTablet } from 'src/entities/products-related/specs/specs-tablet.entity'; 
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { Cache } from 'cache-manager';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 @Injectable()
 export class ProductService {
+  private readonly logger = new Logger(ProductService.name);
   constructor(
     @InjectRepository(Product) private readonly productRepository: Repository<Product>,
     @InjectRepository(ProductInventory) private readonly productInventoryRepository: Repository<ProductInventory>,
@@ -23,27 +26,49 @@ export class ProductService {
     @InjectRepository(SpecsSmartphone) private readonly specsSmartphoneRepository: Repository<SpecsSmartphone>,
     @InjectRepository(SpecsLaptop) private readonly specsLaptopRepository: Repository<SpecsLaptop>,
     @InjectRepository(SpecsTablet) private readonly specsTabletRepository: Repository<SpecsTablet>,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   async findAll(): Promise<Product[]> {
-    return await this.productRepository.find({
-      relations: ['inventory', 'reviews', 'reviews.user', 'discounts', 'laptopSpecs', 'smartphoneSpecs', 'tabletSpecs'],
+    const cacheKey = 'products';
+    const cachedProducts = await this.cacheManager.get<Product[]>(cacheKey);
+
+    if (cachedProducts) {
+      this.logger.log('Returning cached products');
+      return cachedProducts;
+    }
+
+    const products = await this.productRepository.find({
+      relations: ['inventory', 'reviews', 'discounts', 'laptopSpecs', 'smartphoneSpecs', 'tabletSpecs'],
     });
+    this.logger.log('Setting products to cache');
+    await this.cacheManager.set(cacheKey, products,  10000 );
+    return products;
   }
 
   async findOne(id: string): Promise<Product> {
+    const cacheKey = `product_${id}`;
+    const cachedProduct = await this.cacheManager.get<Product>(cacheKey);
+
+    if (cachedProduct) {
+      this.logger.log(`Returning cached product with ID: ${id}`);
+      return cachedProduct;
+    }
+
     const product = await this.productRepository.findOne({
       where: { id },
-      relations: ['inventory', 'reviews', 'reviews.user', 'discounts', 'laptopSpecs', 'smartphoneSpecs', 'tabletSpecs'],
+      relations: ['inventory', 'reviews', 'discounts', 'laptopSpecs', 'smartphoneSpecs', 'tabletSpecs'],
     });
     if (!product) {
       throw new NotFoundException(`Product with ID ${id} not found`);
     }
+    this.logger.log(`Setting product with ID: ${id} to cache`);
+    await this.cacheManager.set(cacheKey, product, 10000 );
     return product;
   }
 
   async create(createProductDto: CreateProductDto): Promise<Product> {
-    const { name, price, inventory, reviews, discounts, category, tabletSpecs, smartphoneSpecs, LaptopSpecs } = createProductDto;
+    const { name, price, inventory, reviews, discounts, category, tabletSpecs, smartphoneSpecs, laptopSpecs } = createProductDto;
 
     const product = this.productRepository.create({ name, price, category});
     const newProduct = await this.productRepository.save(product);
@@ -96,9 +121,9 @@ export class ProductService {
       newProduct.smartphoneSpecs = specsSmartphoneEntity;
     }
 
-    if (LaptopSpecs) {
+    if (laptopSpecs) {
       const specsLaptopEntity = new SpecsLaptop();
-      Object.assign(specsLaptopEntity, LaptopSpecs);
+      Object.assign(specsLaptopEntity, laptopSpecs);
       specsLaptopEntity.product = newProduct;
       await this.specsLaptopRepository.save(specsLaptopEntity);
       newProduct.laptopSpecs = specsLaptopEntity;
@@ -112,6 +137,8 @@ export class ProductService {
       newProduct.tabletSpecs = specsTabletEntity;
     }
     await this.productRepository.save(newProduct);
+    await this.cacheManager.del('products');
+    this.logger.log('Cleared products cache');
     return this.findOne(newProduct.id);
   }
 
