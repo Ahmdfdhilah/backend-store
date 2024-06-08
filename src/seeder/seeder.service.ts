@@ -31,7 +31,7 @@ export class SeederService {
 
   private async seedUsers() {
     const users = [
-      { username: 'ahmdfdhilah', email: 'test@example.com', password: 'password', UserRole: "admin" },
+      { username: 'ahmdfdhilah', email: 'test@example.com', password: 'password', userRole: "admin", imgSrc: '/img/user/example.jpg' },
     ];
 
     for (const user of users) {
@@ -475,7 +475,6 @@ export class SeederService {
           rearFlash: "LED flash",
           frontCamera: "8 MP, f/2.0",
           operatingSystem: "Android 11, Realme UI for Pad",
-          skin: "Realme UI 2.0",
           wifi: "Wi-Fi 802.11 a/b/g/n/ac, dual-band, Wi-Fi Direct, hotspot",
           gps: "Yes, with A-GPS, GLONASS, BDS",
           bluetooth: "5.0, A2DP, LE",
@@ -524,7 +523,6 @@ export class SeederService {
           rearFlash: "No",
           frontCamera: "12 MP, f/2.2, 26mm (wide), 1/3.6\", 1.22µm",
           operatingSystem: "Android 12, One UI 4.1",
-          skin: "One UI 4.1",
           wifi: "Wi-Fi 802.11 a/b/g/n/ac/6e, dual-band, Wi-Fi Direct, hotspot",
           gps: "Yes, with A-GPS, GLONASS, BDS, GALILEO",
           bluetooth: "5.2, A2DP, LE",

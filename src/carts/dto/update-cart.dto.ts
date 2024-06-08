@@ -1,19 +1,15 @@
-import { IsUUID, ValidateNested, IsInt } from 'class-validator';
-import { Type } from 'class-transformer';
+import { z } from 'zod';
 
-class UpdateCartItemDto {
-  @IsUUID()
-  productId: string;
+export const UpdateCartItemDtoSchema = z.object({
+  productId: z.string(),  
+  quantity: z.number(),   
+});
 
-  @IsInt()
-  quantity: number;
-}
+export const UpdateCartDtoSchema = z.object({
+  userId: z.string().optional(),                   
+  items: z.array(UpdateCartItemDtoSchema),          
+});
 
-export class UpdateCartDto {
-  @IsUUID()
-  userId?: string;
+export type UpdateCartItemDto = z.infer<typeof UpdateCartItemDtoSchema>;
 
-  @ValidateNested({ each: true })
-  @Type(() => UpdateCartItemDto)
-  items: UpdateCartItemDto[];
-}
+export type UpdateCartDto = z.infer<typeof UpdateCartDtoSchema>;

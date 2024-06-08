@@ -19,8 +19,8 @@ export class Product {
   @Column()
   category: string;
 
-  @Column()
-  imgSrc: string;
+  // @Column()
+  // imgSrc: string;
 
   @Column()
   price: number;

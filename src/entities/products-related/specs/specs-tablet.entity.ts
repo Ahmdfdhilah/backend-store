@@ -70,9 +70,6 @@ export class SpecsTablet {
   operatingSystem: string; // Operating system
 
   @Column()
-  skin: string; // Skin
-
-  @Column()
   wifi: string; // Wi-Fi
 
   @Column()

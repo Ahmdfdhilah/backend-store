@@ -1,29 +1,14 @@
-import { IsInt, IsUUID, ValidateNested } from "class-validator";
-import { CreateOrderItemDto, CreateOrderStatusDto, CreatePaymentsDto, CreateShippingDetailsDto } from "./create-order.dto";
-import { Type } from "class-transformer";
+import { z } from 'zod';
+import { CreateOrderItemDtoSchema, CreateOrderStatusDtoSchema, CreateShippingDetailsDtoSchema, CreatePaymentsDtoSchema } from './create-order.dto';
 
-export class UpdateOrderDto {
-  @IsUUID()
-  userId: string;
+export const UpdateOrderDtoSchema = z.object({
+  userId: z.string(),                        
+  total: z.number(),                          
+  couponsId: z.string().optional(),            
+  items: z.array(CreateOrderItemDtoSchema), 
+  statusHistory: z.array(CreateOrderStatusDtoSchema), 
+  shippingDetails: CreateShippingDetailsDtoSchema, 
+  payments: z.array(CreatePaymentsDtoSchema), 
+});
 
-  @IsInt()
-  total: number;
-
-  couponsId?: string;
-
-  @ValidateNested({ each: true })
-  @Type(() => CreateOrderItemDto)
-  items: CreateOrderItemDto[];
-
-  @ValidateNested({ each: true })
-  @Type(() => CreateOrderStatusDto)
-  statusHistory: CreateOrderStatusDto[];
-
-  @ValidateNested({ each: true })
-  @Type(() => CreateShippingDetailsDto)
-  shippingDetails: CreateShippingDetailsDto[];
-
-  @ValidateNested({ each: true })
-  @Type(() => CreatePaymentsDto)
-  payments: CreatePaymentsDto[];
-}
+export type UpdateOrderDto = z.infer<typeof UpdateOrderDtoSchema>;

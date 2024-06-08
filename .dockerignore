@@ -1,0 +1,38 @@
+# Ignore node_modules
+node_modules
+node_modules/
+
+# Ignore test directory
+test
+test/
+
+# Ignore dist directory (you can build this inside the container)
+dist
+dist/
+
+# Ignore Docker-related files (not needed inside the container)
+docker
+docker/
+Dockerfile
+docker-compose.yml
+
+# Ignore environment files
+.env
+
+# Ignore Git-related files
+.git
+.gitignore
+
+# Ignore logs and temporary files
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+*.log
+
+# Ignore TypeScript build artifacts
+*.tsbuildinfo
+
+# Ignore IDE/editor specific files
+.vscode/
+.idea/
+*.swp
