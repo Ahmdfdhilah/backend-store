@@ -42,6 +42,10 @@ export class CartService {
     return carts;
   }
 
+  async findCartByUserId(userId: string): Promise<Cart> {
+    return this.cartRepository.findOne({ where: { user: { id: userId } }, relations: ['items', 'items.product', 'user'] });
+  }
+  
   async findOne(id: string): Promise<Cart> {
     const cacheKey = `cart_${id}`;
     const cachedCart = await this.cacheManager.get<Cart>(cacheKey);

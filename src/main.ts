@@ -8,10 +8,10 @@ async function bootstrap() {
   app.use(helmet());
   app.useGlobalFilters(new ThrottlerExceptionFilter());
   app.enableCors({
-    origin: 'http://localhost:3000',
+    origin: 'http://localhost:3001',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });
-  await app.listen(8000);
+  await app.listen(3000);
 }
 bootstrap();

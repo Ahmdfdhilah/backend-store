@@ -13,6 +13,6 @@ export class Cart {
   @OneToMany(() => CartItem, cartItem => cartItem.cart, { cascade: true, onDelete: 'CASCADE' })
   items: CartItem[];
 
-  @Column('decimal')
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0.0 })
   totalPrice: number;
 }

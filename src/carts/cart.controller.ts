@@ -24,6 +24,11 @@ export class CartController {
     return this.cartService.findOne(id);
   }
 
+  @Get('user/:userId')
+  async findCartByUserId(@Param('userId') userId: string) {
+    return this.cartService.findCartByUserId(userId);
+  }
+  
   @Put(':id')
   async update(@Param('id') id: string, @Body() updateCartDto: UpdateCartDto) {
     return this.cartService.update(id, updateCartDto);
