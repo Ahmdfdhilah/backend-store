@@ -129,10 +129,11 @@ export class OrderService {
     await this.shippingDetailsRepository.save(orderShippingDetails);
     savedOrder.shippingDetails = orderShippingDetails;
   
+    
     savedOrder.total = total;
   
     await this.orderRepository.save(savedOrder);
-  
+
     const orderPayments = this.paymentsRepository.create({
       amount: total,
       status: 'pending',
@@ -174,6 +175,8 @@ export class OrderService {
       };
   
       const transaction = await this.snap.createTransaction(transactionPayload);
+      console.log(transaction);
+      
       savedOrder.snapToken = transaction.token;
       await this.orderRepository.save(savedOrder);
       orderPayments.link_payment = transaction.redirect_url;

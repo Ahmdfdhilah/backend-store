@@ -1,5 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Req,  UseGuards } from '@nestjs/common';
-import { AuthPayloadDto } from './dto/auth.dto';
+import { Body, Controller, Get, Param, Post, Put, Req,  UnauthorizedException,  UseGuards, Headers } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalGuard } from './guards/local.guard';
 import { JwtAuthGuard } from './guards/jwt.guard';
@@ -9,6 +8,17 @@ import { UpdateUserDto } from 'src/users/dto/update-user.dto';
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
+
+  @Get('me')
+  getMe(@Headers('Authorization') authorization: string) {
+    if (!authorization) {
+      throw new UnauthorizedException('No token provided');
+    }
+
+    const token = authorization.replace('Bearer ', '');
+    const userId = this.authService.getUserIdFromToken(token);
+    return { userId };
+  }
 
   @UseGuards(LocalGuard)
   @Post('login')

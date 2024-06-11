@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../users/user.service';
 import { AuthPayloadDto } from './dto/auth.dto';
@@ -13,6 +13,22 @@ export class AuthService {
     private jwtService: JwtService,
     private userService: UserService,
   ) {}
+
+  decodeToken(token: string): any {
+    try {
+      return this.jwtService.decode(token);
+    } catch (error) {
+      throw new UnauthorizedException('Invalid token');
+    }
+  }
+
+  getUserIdFromToken(token: string): string {
+    console.log(token);
+    const decodedToken = this.decodeToken(token);
+    console.log(decodedToken);
+    
+    return decodedToken?.sub;
+  }
 
   async validateUser({ username, password }: AuthPayloadDto): Promise<any> {
     const user = await this.userService.findByUsername(username);

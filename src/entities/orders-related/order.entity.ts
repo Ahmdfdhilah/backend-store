@@ -16,8 +16,8 @@ export class Order {
   @Column()
   total: number;
   
-  @Column()
-  snapToken: string;
+  @Column({ nullable: true }) 
+  snapToken: string = "";
 
   @OneToMany(() => OrderItem, items => items.order, {cascade: true})
   items: OrderItem[];

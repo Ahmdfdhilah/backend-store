@@ -9,18 +9,18 @@ export class Payments {
   @ManyToOne(() => Order, order => order.payments, {eager: true})
   order: Order;
 
-  @Column()
+  @Column({ nullable: true })
   amount: number;
 
-  @Column()
+  @Column({ nullable: true })
   method: string;
 
-  @Column()
+  @Column({ nullable: true })
   status: string;
 
-  @Column()
+  @Column({ nullable: true })
   link_payment: string;
 
-  @Column()
+  @Column({ nullable: true })
   paid_at: Date;
 }
