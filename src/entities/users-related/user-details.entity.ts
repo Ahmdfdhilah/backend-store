@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from 'typeorm';
 import { User } from './user.entity';
 
 @Entity()
@@ -13,17 +13,17 @@ export class UserDetails {
   lastName: string;
 
   @Column()
-  fullName: string;
-
-  @Column()
-  imgSrc: string;
-  
-  @Column()
   phone: string;
 
   @Column()
-  country: string;
+  gender: string;
 
-  @ManyToOne(() => User, user => user.details)
+  @Column()
+  birthDate: string;
+
+  @Column({nullable:true})
+  imgSrc: string;
+
+  @OneToOne(() => User, user => user.details)
   user: User;
 }

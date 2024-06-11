@@ -163,7 +163,7 @@ export class OrderService {
             address: orderShippingDetails.address,
             city: orderShippingDetails.city,
             postal_code: orderShippingDetails.postalCode,
-            country_code: user.details?.[0]?.country
+            country_code: user.addresses?.[0]?.country
           }
         },
         item_details: orderItems.map(item => ({

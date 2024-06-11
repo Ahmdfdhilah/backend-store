@@ -46,6 +46,8 @@ export class SeederService {
       {
         name: "Asus ROG Zephyrus G14",
         price: 25000000,
+        imgSrc: "/img/products/",
+        weight: 1500,
         laptopSpecs: {
           brand: "Asus",
           model: "ROG Zephyrus G14",
@@ -94,6 +96,8 @@ export class SeederService {
       {
         name: "Dell XPS 15",
         price: 30000000,
+        imgSrc: "/img/products/",
+        weight: 1400,
         laptopSpecs: {
           brand: "Dell",
           model: "XPS 15",
@@ -142,6 +146,8 @@ export class SeederService {
       {
         name: "HP Spectre x360",
         price: 22000000,
+        imgSrc: "/img/products/",
+        weight: 1300,
         laptopSpecs: {
           brand: "HP",
           model: "Spectre x360",
@@ -190,6 +196,8 @@ export class SeederService {
       {
         name: "Lenovo ThinkPad X1 Carbon",
         price: 27000000,
+        imgSrc: "/img/products/",
+        weight:1000,
         laptopSpecs: {
           brand: "Lenovo",
           model: "ThinkPad X1 Carbon",
@@ -238,6 +246,8 @@ export class SeederService {
       {
         name: "Apple MacBook Pro 16-inch",
         price: 40000000,
+        imgSrc: "/img/products/",
+        weight:2000,
         laptopSpecs: {
           brand: "Apple",
           model: "MacBook Pro 16-inch",
@@ -285,6 +295,8 @@ export class SeederService {
       },{
         name: "Samsung Galaxy S22 Ultra",
         price: 20000000,
+        imgSrc: "/img/products/",
+        weight:228,
         smartphoneSpecs: {
           brand: "Samsung",
           model: "Galaxy S22 Ultra",
@@ -327,6 +339,8 @@ export class SeederService {
       {
         name: "iPhone 14 Pro Max",
         price: 23000000,
+        imgSrc: "/img/products/",
+        weight:238,
         smartphoneSpecs: {
           brand: "Apple",
           model: "iPhone 14 Pro Max",
@@ -369,6 +383,8 @@ export class SeederService {
       {
         name: "OnePlus 10 Pro",
         price: 18000000,
+        imgSrc: "/img/products/",
+        weight:197,
         smartphoneSpecs: {
           brand: "OnePlus",
           model: "10 Pro",
@@ -411,6 +427,8 @@ export class SeederService {
       {
         name: "Xiaomi Redmi Note 13 Pro",
         price: 3500000,
+        imgSrc: "/img/products/",
+        weight:179,
         smartphoneSpecs: {
           brand: "Xiaomi",
           model: "Redmi Note 13 Pro",
@@ -453,6 +471,8 @@ export class SeederService {
       {
         name: "Realme Pad",
         price: 3000000,
+        imgSrc: "/img/products/",
+        weight:440,
         tabletSpecs: {
           brand: "Realme",
           model: "Pad",
@@ -501,6 +521,8 @@ export class SeederService {
       {
         name: "Samsung Galaxy Tab S8 Ultra",
         price: 14000000,
+        imgSrc: "/img/products/",
+        weight:580,
         tabletSpecs: {
           brand: "Samsung",
           model: "Galaxy Tab S8 Ultra",
@@ -549,6 +571,8 @@ export class SeederService {
       {
         name: "iPad Air (2023)",
         price: 9000000,
+        imgSrc: "/img/products/",
+        weight:460,
         tabletSpecs: {
           brand: "Apple",
           model: "iPad Air (2023)",
@@ -597,6 +621,8 @@ export class SeederService {
       },{
         name: "iPad Air (2023)",
         price: 9000000,
+        imgSrc: "/img/products/",
+        weight:460,
         tabletSpecs: {
           brand: "Apple",
           model: "iPad Air (2023)",
@@ -646,6 +672,8 @@ export class SeederService {
       {
         name: "Samsung Galaxy Tab S8 Ultra",
         price: 15000000,
+        imgSrc: "/img/products/",
+        weight:575,
         tabletSpecs: {
           brand: "Samsung",
           model: "Galaxy Tab S8 Ultra",
@@ -695,6 +723,8 @@ export class SeederService {
       {
         name: "Huawei MatePad Pro 12.6",
         price: 13000000,
+        imgSrc: "/img/products/",
+        weight:609,
         tabletSpecs: {
           brand: "Huawei",
           model: "MatePad Pro 12.6",

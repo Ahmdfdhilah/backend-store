@@ -68,9 +68,9 @@ export class ProductService {
   }
 
   async create(createProductDto: CreateProductDto): Promise<Product> {
-    const { name, price, inventory, reviews, discounts, category, tabletSpecs, smartphoneSpecs, laptopSpecs } = createProductDto;
+    const { name, price, weight, imgSrc, inventory, reviews, discounts, category, tabletSpecs, smartphoneSpecs, laptopSpecs } = createProductDto;
 
-    const product = this.productRepository.create({ name, price, category});
+    const product = this.productRepository.create({ name, price, category, weight, imgSrc});
     const newProduct = await this.productRepository.save(product);
 
     if (inventory) {
@@ -143,7 +143,7 @@ export class ProductService {
   }
 
   async update(id: string, updateProductDto: UpdateProductDto): Promise<Product> {
-    const { name, price, category, tabletSpecs, smartphoneSpecs, laptopSpecs} = updateProductDto;
+    const { name, price, category,weight, imgSrc, tabletSpecs, smartphoneSpecs, laptopSpecs} = updateProductDto;
 
     let product = await this.productRepository.findOne({where: {id} ,
       relations: ['inventory', 'reviews', 'discounts', 'laptopSpecs', 'smartphoneSpecs', 'tabletSpecs'],
@@ -155,6 +155,8 @@ export class ProductService {
     product.name = name ?? product.name;
     product.price = price ?? product.price;
     product.category = category ?? product.category;
+    product.weight = weight ?? product.weight;
+    product.imgSrc = imgSrc ?? product.imgSrc;
 
     if (smartphoneSpecs) {
       if (!product.smartphoneSpecs) {

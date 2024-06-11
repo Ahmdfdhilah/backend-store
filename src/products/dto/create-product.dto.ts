@@ -136,7 +136,8 @@ export const CreateProductDtoSchema = z.object({
   name: z.string(),
   price: z.number(),
   category: z.string(),
-
+  imgSrc: z.string(),
+  weight: z.number(),
   inventory: z.array(CreateInventoryDtoSchema),
   reviews: z.array(CreateReviewDtoSchema),
   discounts: z.array(CreateDiscountDtoSchema),

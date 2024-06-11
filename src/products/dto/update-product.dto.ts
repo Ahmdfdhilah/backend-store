@@ -135,6 +135,8 @@ const UpdateSpecsTabletDtoSchema = z.object({
 export const UpdateProductDtoSchema = z.object({
   name: z.string().optional(),
   price: z.number().optional(),
+  imgSrc: z.string(),
+  weight: z.number(),
   inventory: z.array(UpdateInventoryDtoSchema).optional(),
   reviews: z.array(UpdateReviewDtoSchema).optional(),
   discounts: z.array(UpdateDiscountDtoSchema).optional(),

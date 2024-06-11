@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, Inject, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../entities/users-related/user.entity';
-import { Address } from '../entities/users-related/address.entity';
+import { UserAddress } from 'src/entities/users-related/user-address.entity';
 import { UserDetails } from '../entities/users-related/user-details.entity';
 import { ProductReviews } from '../entities/products-related/product-reviews.entity';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -17,7 +17,7 @@ export class UserService {
 
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
-    @InjectRepository(Address) private readonly addressRepository: Repository<Address>,
+    @InjectRepository(UserAddress) private readonly addressRepository: Repository<UserAddress>,
     @InjectRepository(UserDetails) private readonly userDetailsRepository: Repository<UserDetails>,
     @InjectRepository(ProductReviews) private readonly productReviewsRepository: Repository<ProductReviews>,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
@@ -33,7 +33,7 @@ export class UserService {
     }
 
     const users = await this.userRepository.find({
-      relations: ['addresses', 'carts', 'orders', 'details', 'reviews'],
+      relations: ['addresses', 'orders', 'details', 'reviews'],
     });
     this.logger.log('Setting users to cache');
     await this.cacheManager.set(cacheKey, JSON.stringify(users), 100000);
@@ -51,7 +51,7 @@ export class UserService {
 
     const user = await this.userRepository.findOne({
       where: { id },
-      relations: ['addresses', 'carts', 'orders', 'details', 'reviews'],
+      relations: ['addresses', 'orders', 'details', 'reviews'],
     });
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
@@ -70,10 +70,11 @@ export class UserService {
 
     if (addresses) {
       const addressEntities = addresses.map(item => {
-        const addressEntity = new Address();
+        const addressEntity = new UserAddress();
         addressEntity.street = item.street;
         addressEntity.city = item.city;
         addressEntity.state = item.state;
+        addressEntity.country = item.country;
         addressEntity.postalCode = item.postalCode;
         addressEntity.user = newUser;
         return addressEntity;
@@ -81,15 +82,15 @@ export class UserService {
       await this.addressRepository.save(addressEntities);
       newUser.addresses = addressEntities;
     }
-
     if (details) {
       const detailsEntities = details.map(item => {
         const detailsEntity = new UserDetails();
         detailsEntity.phone = item.phone;
-        detailsEntity.country = item.country;
+        detailsEntity.imgSrc = item.imgSrc;
+        detailsEntity.birthDate = item.birthDate;
+        detailsEntity.gender = item.gender;
         detailsEntity.firstName = item.firstName;
         detailsEntity.lastName = item.lastName;
-        detailsEntity.fullName = item.fullName;
         detailsEntity.user = newUser;
         return detailsEntity;
       });
@@ -124,7 +125,7 @@ export class UserService {
       return cachedUser;
     }
 
-    const user = await this.userRepository.findOne({ where: { username }, relations: ['addresses', 'carts', 'orders', 'details', 'reviews'] });
+    const user = await this.userRepository.findOne({ where: { username }, relations: ['addresses', 'orders', 'details', 'reviews'] });
     if (user) {
       this.logger.log(`Setting user with username: ${username} to cache`);
       await this.cacheManager.set(cacheKey, user, 10000 );
@@ -153,7 +154,7 @@ export class UserService {
     if (addresses) {
       await this.addressRepository.delete({ user });
       const addressEntities = addresses.map(item => {
-        const addressEntity = new Address();
+        const addressEntity = new UserAddress();
         addressEntity.street = item.street;
         addressEntity.city = item.city;
         addressEntity.state = item.state;
@@ -170,10 +171,11 @@ export class UserService {
       const detailsEntities = details.map(item => {
         const detailsEntity = new UserDetails();
         detailsEntity.phone = item.phone;
-        detailsEntity.country = item.country;
+        detailsEntity.imgSrc = item.imgSrc;
+        detailsEntity.birthDate = item.birthDate;
+        detailsEntity.gender = item.gender;
         detailsEntity.firstName = item.firstName;
         detailsEntity.lastName = item.lastName;
-        detailsEntity.fullName = item.fullName;
         detailsEntity.user = user;
         return detailsEntity;
       });

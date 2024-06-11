@@ -5,14 +5,16 @@ const CreateAddressDtoSchema = z.object({
   city: z.string(),
   state: z.string(),
   postalCode: z.string(),
+  country: z.string(),
 });
 
 const CreateUserDetailsDtoSchema = z.object({
   firstName: z.string(),
   lastName: z.string(),
-  fullName: z.string(),
   phone: z.string(),
-  country: z.string(),
+  imgSrc: z.string(),
+  gender: z.string(),
+  birthDate: z.string(),
 });
 
 const CreateReviewDtoSchema = z.object({
@@ -32,3 +34,4 @@ export const CreateUserDtoSchema = z.object({
 });
 
 export type CreateUserDto = z.infer<typeof CreateUserDtoSchema>;
+export type CreateUserAddressDto = z.infer<typeof CreateAddressDtoSchema>;

@@ -5,14 +5,16 @@ const UpdateAddressDtoSchema = z.object({
   city: z.string().optional(),
   state: z.string().optional(),
   postalCode: z.string().optional(),
+  country: z.string().optional()
 });
 
 const UpdateUserDetailsDtoSchema = z.object({
   firstName: z.string().optional(),
   lastName: z.string().optional(),
-  fullName: z.string().optional(),
-  country: z.string().optional(),
   phone: z.string().optional(),
+  imgSrc: z.string().optional(),
+  gender: z.string().optional(),
+  birthDate: z.string().optional(),
 });
 
 const UpdateReviewDtoSchema = z.object({
@@ -31,3 +33,4 @@ export const UpdateUserDtoSchema = z.object({
 });
 
 export type UpdateUserDto = z.infer<typeof UpdateUserDtoSchema>;
+export type UpdateUserAddressDto = z.infer<typeof UpdateAddressDtoSchema>;

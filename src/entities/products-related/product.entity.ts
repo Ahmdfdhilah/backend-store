@@ -1,5 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTable, OneToOne, JoinColumn } from 'typeorm';
-import { CartItem } from '../cart-item.entity';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany,  OneToOne, JoinColumn } from 'typeorm';
 import { OrderItem } from '../orders-related/order-item.entity';
 import { ProductReviews } from './product-reviews.entity';
 import { ProductInventory } from './product-inventory.entity';
@@ -19,14 +18,14 @@ export class Product {
   @Column()
   category: string;
 
-  // @Column()
-  // imgSrc: string;
+  @Column()
+  weight: number;
+
+  @Column()
+  imgSrc: string;
 
   @Column()
   price: number;
-
-  @OneToMany(() => CartItem, cartItem => cartItem.product, {cascade: true})
-  cartItems: CartItem[];
 
   @OneToMany(() => OrderItem, orderItem => orderItem.product, {cascade: true})
   orderItems: OrderItem[];

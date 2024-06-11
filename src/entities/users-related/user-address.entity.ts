@@ -2,9 +2,9 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 import { User } from './user.entity';
 
 @Entity()
-export class Address {
+export class UserAddress {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   @Column()
   street: string;
@@ -14,6 +14,9 @@ export class Address {
 
   @Column()
   state: string;
+
+  @Column()
+  country: string;
 
   @Column()
   postalCode: string;
