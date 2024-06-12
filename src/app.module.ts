@@ -60,7 +60,7 @@ import { UserAddressModule } from './users/user-address/user-address.module';
     UserDetailsModule,
     UserAddressModule,
     ProductReviewsModule,
-    AuthModule
+    AuthModule,
   ],
   controllers: [],
   providers: [

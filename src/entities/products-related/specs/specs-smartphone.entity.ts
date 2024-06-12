@@ -7,7 +7,7 @@ export class SpecsSmartphone {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({nullable:true})
   brand: string; // Brand
 
   @Column()

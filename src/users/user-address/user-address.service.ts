@@ -11,10 +11,10 @@ export class UserAddressService {
   constructor(
     @InjectRepository(UserAddress) private readonly userAddressRepository: Repository<UserAddress>,
     @InjectRepository(User) private readonly userRepository: Repository<User>,
-  ) {}
+  ) { }
 
   async findByUserId(userId: string): Promise<UserAddress[]> {
-    const userAddress =  await this.userAddressRepository.find({ where: { user: { id: userId } }, relations: ['user'] });
+    const userAddress = await this.userAddressRepository.find({ where: { user: { id: userId } }, relations: ['user'] });
     return userAddress;
   }
 
@@ -29,13 +29,22 @@ export class UserAddressService {
     return await this.userAddressRepository.save(address);
   }
 
-  async update(id: string, updateUserAddressDto: UpdateUserAddressDto): Promise<UserAddress> {
-    const address = await this.userAddressRepository.findOne({ where: { id } });
-    if (!address) {
-      throw new NotFoundException(`Address with ID ${id} not found`);
+  async update(userId: string, updateUserAddressDto: UpdateUserAddressDto): Promise<UserAddress> {
+    const { street, city, state, country, postalCode } = updateUserAddressDto;
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException(`User not found: ${userId}`);
     }
+    await this.userAddressRepository.delete({ user });
+    
+    const address = this.userAddressRepository.create({
+      street: street ? street : user.addresses[0].street,
+      city: city ? city : user.addresses[0].city,
+      state: state ? state : user.addresses[0].state,
+      country: country ? country : user.addresses[0].country,
+      postalCode: postalCode ? postalCode : user.addresses[0].postalCode,
+      user });
 
-    Object.assign(address, updateUserAddressDto);
     return await this.userAddressRepository.save(address);
   }
 

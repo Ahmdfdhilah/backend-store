@@ -67,8 +67,8 @@ export class ProductService {
     return product;
   }
 
-  async create(createProductDto: CreateProductDto): Promise<Product> {
-    const { name, price, weight, imgSrc, inventory, reviews, discounts, category, tabletSpecs, smartphoneSpecs, laptopSpecs } = createProductDto;
+  async create(createProductDto: CreateProductDto, imgSrc: string): Promise<Product> {
+    const { name, price, weight, inventory, reviews, discounts, category, tabletSpecs, smartphoneSpecs, laptopSpecs } = createProductDto;
 
     const product = this.productRepository.create({ name, price, category, weight, imgSrc});
     const newProduct = await this.productRepository.save(product);
@@ -142,8 +142,8 @@ export class ProductService {
     return this.findOne(newProduct.id);
   }
 
-  async update(id: string, updateProductDto: UpdateProductDto): Promise<Product> {
-    const { name, price, category,weight, imgSrc, tabletSpecs, smartphoneSpecs, laptopSpecs} = updateProductDto;
+  async update(id: string, updateProductDto: UpdateProductDto, imgSrc?: string): Promise<Product> {
+    const { name, price, category,weight, tabletSpecs, smartphoneSpecs, laptopSpecs} = updateProductDto;
 
     let product = await this.productRepository.findOne({where: {id} ,
       relations: ['inventory', 'reviews', 'discounts', 'laptopSpecs', 'smartphoneSpecs', 'tabletSpecs'],
@@ -237,6 +237,17 @@ export class ProductService {
     await this.productReviewsRepository.delete({ product });
     await this.discountsRepository.delete({ product });
     await this.productRepository.delete(id);
+  }
+  async updateProductImage(productId: string, imageUrl: string): Promise<void> {
+    const product = await this.productRepository.findOne({where:{id: productId}});
+
+    if (!product) {
+      throw new Error(`Product not found with ID ${productId}`);
+    }
+
+    product.imgSrc = imageUrl;
+
+    await this.productRepository.save(product);
   }
   
 }

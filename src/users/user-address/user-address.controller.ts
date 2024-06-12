@@ -3,7 +3,7 @@ import { UserAddressService } from './user-address.service';
 import { UpdateUserAddressDto } from '../dto/update-user.dto';
 import { CreateUserAddressDto } from '../dto/create-user.dto';
 
-@Controller('user-addresses')
+@Controller('/users/user-address')
 export class UserAddressController {
   constructor(private readonly userAddressService: UserAddressService) {}
 
@@ -17,9 +17,9 @@ export class UserAddressController {
     return await this.userAddressService.create(userId, createUserAddressDto);
   }
 
-  @Put(':id')
-  async updateById(@Param('id') id: string, @Body() updateUserAddressDto: UpdateUserAddressDto) {
-    return await this.userAddressService.update(id, updateUserAddressDto);
+  @Put(':userDd')
+  async updateById(@Param('userId') userId: string, @Body() updateUserAddressDto: UpdateUserAddressDto) {
+    return await this.userAddressService.update(userId, updateUserAddressDto);
   }
 
   @Delete(':id')

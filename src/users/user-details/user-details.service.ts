@@ -11,7 +11,7 @@ export class UserDetailsService {
   constructor(
     @InjectRepository(UserDetails) private readonly userDetailsRepository: Repository<UserDetails>,
     @InjectRepository(User) private readonly userRepository: Repository<User>,
-  ) {}
+  ) { }
 
   async findByUserId(userId: string): Promise<UserDetails> {
     const userDetails = await this.userDetailsRepository.findOne({ where: { user: { id: userId } }, relations: ['user'] });
@@ -21,23 +21,36 @@ export class UserDetailsService {
     return userDetails;
   }
 
-  async create(userId: string, createUserDetailsDto: CreateUserDetailsDto): Promise<UserDetails> {
+  async create(userId: string, createUserDetailsDto: CreateUserDetailsDto, imgSrc: string): Promise<UserDetails> {
     const user = await this.userRepository.findOne({ where: { id: userId } });
+    const { firstName, lastName, phone, gender, birthDate } = createUserDetailsDto;
     if (!user) {
       throw new NotFoundException(`User not found: ${userId}`);
     }
 
-    const userDetails = this.userDetailsRepository.create({ ...createUserDetailsDto, user });
+    const userDetails = this.userDetailsRepository.create({
+      firstName, lastName, phone, gender, birthDate, imgSrc, user: user
+    });
     return await this.userDetailsRepository.save(userDetails);
   }
 
-  async update(id: string, updateUserDetailsDto: UpdateUserDetailsDto): Promise<UserDetails> {
-    const userDetails = await this.userDetailsRepository.findOne({ where: { id }, relations: ['user'] });
-    if (!userDetails) {
-      throw new NotFoundException(`UserDetails with ID ${id} not found`);
+  async update(userId: string, updateUserDetailsDto: UpdateUserDetailsDto, imgSrc?: string): Promise<UserDetails> {
+    const user = await this.userRepository.findOne({ where: { id: userId }, relations: ['details'] });
+    if (!user) {
+      throw new NotFoundException(`User not found: ${userId}`);
     }
 
-    Object.assign(userDetails, updateUserDetailsDto);
+    let userDetails = await this.userDetailsRepository.findOne({ where: { user: { id: userId } }, relations: ['user'] });
+    if (!userDetails) {
+      throw new NotFoundException(`UserDetails for User ID ${userId} not found`);
+    }
+
+    userDetails = {
+      ...userDetails,
+      ...updateUserDetailsDto,
+      imgSrc: imgSrc ?? userDetails.imgSrc,
+    };
+
     return await this.userDetailsRepository.save(userDetails);
   }
 
@@ -49,4 +62,5 @@ export class UserDetailsService {
 
     await this.userDetailsRepository.remove(userDetails);
   }
+
 }
