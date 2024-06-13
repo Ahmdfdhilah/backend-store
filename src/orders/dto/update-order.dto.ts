@@ -9,6 +9,7 @@ export const UpdateOrderDtoSchema = z.object({
   statusHistory: z.array(CreateOrderStatusDtoSchema), 
   shippingDetails: CreateShippingDetailsDtoSchema, 
   payments: z.array(CreatePaymentsDtoSchema), 
+  shippingCost: z.number(),
 });
 
 export type UpdateOrderDto = z.infer<typeof UpdateOrderDtoSchema>;

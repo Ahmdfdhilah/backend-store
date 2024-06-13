@@ -2,7 +2,7 @@ import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { CacheModule } from '@nestjs/cache-manager';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-import { redisStore } from 'cache-manager-redis-yet';
+import { redisStore } from 'cache-manager-redis-store';
 import { UserModule } from './users/user.module';
 import { ProductModule } from './products/product.module';
 import { OrderModule } from './orders/order.module';
@@ -51,6 +51,8 @@ import { UserAddressModule } from './users/user-address/user-address.module';
     CacheModule.register({
       isGlobal:true,
       ttl: 300,
+      host: process.env.REDIS_HOST || 'redis',
+      port: parseInt(process.env.REDIS_PORT, 10) || 6379,
     }),
     TypeOrmModule.forFeature([User, Product, Order, OrderItem, UserAddress, Discounts, OrderStatusHistory, Payments, ProductInventory, ProductReviews, ShippingDetails, UserDetails, SpecsLaptop, SpecsSmartphone, SpecsTablet]),
     SeederModule,

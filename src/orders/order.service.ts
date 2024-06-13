@@ -73,7 +73,7 @@ export class OrderService {
   }
 
   async create(createOrderDto: CreateOrderDto): Promise<any> {
-    const { userId, items, statusHistory, shippingDetails } = createOrderDto;
+    const { userId, items, statusHistory, shippingDetails, shippingCost } = createOrderDto;
   
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
@@ -104,7 +104,10 @@ export class OrderService {
   
     savedOrder.items = orderItems;
   
-    const total = orderItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
+    console.log(shippingCost);
+    console.log(typeof(shippingCost));
+  
+    const total = orderItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0)+ shippingCost;
   
     const orderStatusHistories = statusHistory.map(status => {
       const orderStatus = this.orderStatusHistoryRepository.create({
@@ -166,13 +169,20 @@ export class OrderService {
             country_code: user.addresses?.[0]?.country
           }
         },
-        item_details: orderItems.map(item => ({
-          id: item.product.id,
-          price: item.product.price,
-          quantity: item.quantity,
-          name: item.product.name,
-        })),
-      };
+        item_details: [
+          {
+            price: shippingCost,  
+            quantity: 1,
+            name: "Biaya Pengiriman"
+          },
+          ...orderItems.map(item => ({
+            id: item.product.id,
+            price: item.product.price,
+            quantity: item.quantity,
+            name: item.product.name,
+          }))
+        ]
+      }
   
       const transaction = await this.snap.createTransaction(transactionPayload);
       console.log(transaction);

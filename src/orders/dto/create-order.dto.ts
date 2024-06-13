@@ -39,6 +39,7 @@ export const CreateOrderDtoSchema = z.object({
   statusHistory: z.array(CreateOrderStatusDtoSchema),
   shippingDetails: CreateShippingDetailsDtoSchema,  
   payments: z.array(CreatePaymentsDtoSchema), 
+  shippingCost: z.number(),
 });
 
 export type CreateOrderDto = z.infer<typeof CreateOrderDtoSchema>;

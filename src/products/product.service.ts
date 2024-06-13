@@ -145,6 +145,8 @@ export class ProductService {
   async update(id: string, updateProductDto: UpdateProductDto, imgSrc?: string): Promise<Product> {
     const { name, price, category,weight, tabletSpecs, smartphoneSpecs, laptopSpecs} = updateProductDto;
 
+    console.log(tabletSpecs, smartphoneSpecs, laptopSpecs);
+    
     let product = await this.productRepository.findOne({where: {id} ,
       relations: ['inventory', 'reviews', 'discounts', 'laptopSpecs', 'smartphoneSpecs', 'tabletSpecs'],
     });
@@ -158,16 +160,14 @@ export class ProductService {
     product.weight = weight ?? product.weight;
     product.imgSrc = imgSrc ?? product.imgSrc;
 
-    if (smartphoneSpecs) {
+    if (smartphoneSpecs !== undefined) {
       if (!product.smartphoneSpecs) {
         product.smartphoneSpecs = new SpecsSmartphone();
       }
       Object.assign(product.smartphoneSpecs, smartphoneSpecs);
       product.smartphoneSpecs.product = product
-      await this.specsSmartphoneRepository.save(product.smartphoneSpecs);
-    } else if (product.smartphoneSpecs) {
       await this.specsSmartphoneRepository.remove(product.smartphoneSpecs);
-      product.smartphoneSpecs = null;
+      await this.specsSmartphoneRepository.save(product.smartphoneSpecs);
     }
 
     if (laptopSpecs) {
@@ -176,22 +176,18 @@ export class ProductService {
       }
       Object.assign(product.laptopSpecs, laptopSpecs);
       product.laptopSpecs.product = product;
-      await this.specsLaptopRepository.save(product.laptopSpecs);
-    } else if (product.laptopSpecs) {
       await this.specsLaptopRepository.remove(product.laptopSpecs);
-      product.laptopSpecs = null;
-    }
+      await this.specsLaptopRepository.save(product.laptopSpecs);
+    } 
 
-    if (tabletSpecs) {
+    if (tabletSpecs !== undefined) {
       if (!product.tabletSpecs) {
         product.tabletSpecs = new SpecsTablet();
       }
       Object.assign(product.tabletSpecs, tabletSpecs);
       product.tabletSpecs.product = product
-      await this.specsTabletRepository.save(product.tabletSpecs);
-    } else if (product.tabletSpecs) {
       await this.specsTabletRepository.remove(product.tabletSpecs);
-      product.tabletSpecs = null;
+      await this.specsTabletRepository.save(product.tabletSpecs);
     }
 
     await this.productRepository.save(product);
