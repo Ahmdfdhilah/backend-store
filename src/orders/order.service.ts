@@ -75,11 +75,13 @@ export class OrderService {
   async create(createOrderDto: CreateOrderDto): Promise<any> {
     const { userId, items, statusHistory, shippingDetails, shippingCost } = createOrderDto;
   
+    // Find the user
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
       throw new NotFoundException('User not found');
     }
   
+    // Create a new Order instance
     const order = new Order();
     order.user = user;
     order.items = [];
@@ -87,8 +89,10 @@ export class OrderService {
     order.shippingDetails = null;
     order.total = 0;
   
+    // Save the initial order
     const savedOrder = await this.orderRepository.save(order);
   
+    // Process order items
     const orderItems = await Promise.all(items.map(async item => {
       const product = await this.productRepository.findOne({ where: { id: item.productId } });
       if (!product) {
@@ -102,17 +106,31 @@ export class OrderService {
       return await this.orderItemRepository.save(orderItem);
     }));
   
+    // Update order with items
     savedOrder.items = orderItems;
   
-    console.log(shippingCost);
-    console.log(typeof(shippingCost));
+    // Calculate total including shipping cost
+    const total = orderItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0) + shippingCost;
+    savedOrder.total = total;
   
-    const total = orderItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0)+ shippingCost;
-  
+    // Create and save order status histories
     const orderStatusHistories = statusHistory.map(status => {
       const orderStatus = this.orderStatusHistoryRepository.create({
-        status: status.status,
-        updated_at: new Date(status.updated_at),
+        updated_at: new Date(),
+        transaction_id: status.transaction_id || undefined,
+        gross_amount: status.gross_amount || undefined,
+        currency: status.currency || undefined,
+        payment_type: status.payment_type || undefined,
+        signature_key: status.signature_key || undefined,
+        transaction_status: status.transaction_status || undefined,
+        fraud_status: status.fraud_status || undefined,
+        status_message: status.status_message || undefined,
+        merchant_id: status.merchant_id || undefined,
+        va_numbers: status.va_numbers || undefined,
+        payment_amounts: status.payment_amounts || undefined,
+        transaction_time: status.transaction_time || undefined,
+        settlement_time: status.settlement_time || undefined,
+        expiry_time: status.expiry_time || undefined,
         order: savedOrder
       });
       return orderStatus;
@@ -121,22 +139,23 @@ export class OrderService {
     await this.orderStatusHistoryRepository.save(orderStatusHistories);
     savedOrder.statusHistory = orderStatusHistories;
   
+    // Create and save shipping details
     const orderShippingDetails = this.shippingDetailsRepository.create({
       address: shippingDetails.address,
       city: shippingDetails.city,
       postalCode: shippingDetails.postalCode,
       country: shippingDetails.country,
+      shippingCost: shippingCost,
       order: savedOrder
     });
   
     await this.shippingDetailsRepository.save(orderShippingDetails);
     savedOrder.shippingDetails = orderShippingDetails;
   
-    
-    savedOrder.total = total;
-  
+    // Save updated order with all associations
     await this.orderRepository.save(savedOrder);
-
+  
+    // Create and save payment information
     const orderPayments = this.paymentsRepository.create({
       amount: total,
       status: 'pending',
@@ -148,6 +167,7 @@ export class OrderService {
     savedOrder.payments = [orderPayments];
   
     try {
+      // Prepare transaction payload for Midtrans
       const transactionPayload = {
         transaction_details: {
           order_id: savedOrder.id,
@@ -171,7 +191,7 @@ export class OrderService {
         },
         item_details: [
           {
-            price: shippingCost,  
+            price: shippingCost,
             quantity: 1,
             name: "Biaya Pengiriman"
           },
@@ -182,19 +202,20 @@ export class OrderService {
             name: item.product.name,
           }))
         ]
-      }
+      };
   
+      // Create transaction with Midtrans
       const transaction = await this.snap.createTransaction(transactionPayload);
-      console.log(transaction);
-      
       savedOrder.snapToken = transaction.token;
       await this.orderRepository.save(savedOrder);
       orderPayments.link_payment = transaction.redirect_url;
       await this.paymentsRepository.save(orderPayments);
   
+      // Clear cache
       await this.cacheManager.del('orders');
       this.logger.log('Cleared allOrders cache');
   
+      // Return order details and payment URL
       return {
         order: await this.orderRepository.findOne({
           where: { id: savedOrder.id },
@@ -208,9 +229,9 @@ export class OrderService {
       throw new Error('Midtrans transaction creation failed');
     }
   }
-  
+    
   async update(id: string, updateOrderDto: UpdateOrderDto): Promise<Order> {
-    const { userId, items, statusHistory, shippingDetails, couponsId } = updateOrderDto;
+    const { userId, items, statusHistory, shippingDetails} = updateOrderDto;
 
     const order = await this.orderRepository.findOne({
       where: { id },
@@ -245,21 +266,32 @@ export class OrderService {
       }));
       order.items = orderItems;
     }
-
+    
     if (statusHistory) {
       await this.orderStatusHistoryRepository.delete({ order });
       const orderStatusHistories = statusHistory.map(status => {
-        return this.orderStatusHistoryRepository.create({
-          status: status.status,
-          updated_at: new Date(status.updated_at),
+        const newHistory = this.orderStatusHistoryRepository.create({
+          updated_at: status.updated_at ? new Date(status.updated_at) : new Date(),
+          transaction_id: status.transaction_id || undefined,
+          gross_amount: status.gross_amount || undefined,
+          currency: status.currency || undefined,
+          payment_type: status.payment_type || undefined,
+          signature_key: status.signature_key || undefined,
+          transaction_status: status.transaction_status || undefined,
+          fraud_status: status.fraud_status || undefined,
+          status_message: status.status_message || undefined,
+          merchant_id: status.merchant_id || undefined,
+          va_numbers: status.va_numbers || undefined,
+          payment_amounts: status.payment_amounts || undefined,
+          transaction_time: status.transaction_time || undefined,
+          settlement_time: status.settlement_time || undefined,
+          expiry_time: status.expiry_time || undefined,
           order,
         });
+        return this.orderStatusHistoryRepository.save(newHistory);
       });
-      order.statusHistory = orderStatusHistories;
-      for (const orderStatusHistory of orderStatusHistories) {
-        await this.orderStatusHistoryRepository.save(orderStatusHistory);
-      }
     }
+    
 
     if (shippingDetails) {
       await this.shippingDetailsRepository.delete({ order });
@@ -306,19 +338,58 @@ export class OrderService {
     await this.cacheManager.del(`order_${id}`);
   }
 
-  async getStatus(orderId: string): Promise<any> {
+  async updateOrderStatusFromMidtrans(orderId: string): Promise<Order> {
+    const order = await this.orderRepository.findOne({
+      where: { id: orderId },
+      relations: ['statusHistory'],
+    });
+
+    if (!order) {
+      throw new NotFoundException(`Order with ID ${orderId} not found`);
+    }
+
     const url = `https://api.sandbox.midtrans.com/v2/${orderId}/status`;
     const headers = {
       'Content-Type': 'application/json',
       'Authorization': `Basic ${Buffer.from(process.env.MIDTRANS_SERVER_KEY).toString('base64')}`,
     };
-  
+
     try {
       const response = await axios.get(url, { headers });
-      return response.data;
+      const midtransStatus = response.data.transaction_status;
+
+      console.log(response.data);
+
+      // Get the latest status history entry
+      const latestStatus = order.statusHistory.slice(-1)[0];
+
+      if (!latestStatus || latestStatus.transaction_status !== midtransStatus) {
+        const orderStatusHistory = new OrderStatusHistory();
+        orderStatusHistory.transaction_id = response.data.transaction_id;
+        orderStatusHistory.gross_amount = response.data.gross_amount;
+        orderStatusHistory.currency = response.data.currency;
+        orderStatusHistory.payment_type = response.data.payment_type;
+        orderStatusHistory.signature_key = response.data.signature_key;
+        orderStatusHistory.transaction_status = response.data.transaction_status;
+        orderStatusHistory.fraud_status = response.data.fraud_status;
+        orderStatusHistory.status_message = response.data.status_message;
+        orderStatusHistory.merchant_id = response.data.merchant_id;
+        orderStatusHistory.va_numbers = response.data.va_numbers;
+        orderStatusHistory.payment_amounts = response.data.payment_amounts;
+        orderStatusHistory.transaction_time = response.data.transaction_time;
+        orderStatusHistory.settlement_time = response.data.settlement_time;
+        orderStatusHistory.expiry_time = response.data.expiry_time;
+
+        await this.orderStatusHistoryRepository.save(orderStatusHistory);
+        order.statusHistory.push(orderStatusHistory);
+
+        await this.orderRepository.save(order);
+      }
+
+      return order;
     } catch (error) {
-      this.logger.error('Error getting Midtrans status:', error);
-      throw new Error('Failed to get Midtrans status');
+      this.logger.error('Error updating order status from Midtrans:', error);
+      throw new Error('Failed to update order status from Midtrans');
     }
   }
 

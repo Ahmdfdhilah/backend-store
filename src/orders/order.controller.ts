@@ -5,7 +5,7 @@ import { UpdateOrderDto } from './dto/update-order.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 
 @Controller('orders')
-// @UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard)
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
@@ -24,10 +24,6 @@ export class OrderController {
     return this.orderService.findOne(id);
   }
 
-  @Get(':id/status')
-  async getOrderStatus(@Param('id') id: string) {
-    return await this.orderService.getStatus(id);
-  }
   @Put(':id')
   update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
     return this.orderService.update(id, updateOrderDto);
@@ -37,6 +33,13 @@ export class OrderController {
   remove(@Param('id') id: string) {
     return this.orderService.remove(id);
   }
+
+  //ini untuk controller cek ke midtrans
+  @Get(':id/update-status-from-midtrans')
+  async updateOrderStatusFromMidtrans(@Param('id') id: string) {
+    return this.orderService.updateOrderStatusFromMidtrans(id);
+  }
+
   //ini controller untuk ongkir atau shipping
   @Get('shipping/province')
   async getProvince() {

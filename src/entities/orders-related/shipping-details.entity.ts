@@ -18,6 +18,9 @@ export class ShippingDetails {
   @Column()
   country: string;
 
+  @Column()
+  shippingCost: number;
+
   @OneToOne(() => Order, order => order.shippingDetails)
   order: Order;
 }
