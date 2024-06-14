@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany,  OneToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany,  OneToOne, JoinColumn, JoinTable } from 'typeorm';
 import { OrderItem } from '../orders-related/order-item.entity';
 import { ProductReviews } from './product-reviews.entity';
 import { ProductInventory } from './product-inventory.entity';
@@ -27,14 +27,17 @@ export class Product {
   @Column()
   price: number;
 
+  @Column('simple-array')
+  color: string[];
+
   @OneToMany(() => OrderItem, orderItem => orderItem.product, {cascade: true})
   orderItems: OrderItem[];
 
   @OneToMany(() => ProductReviews, productReviews => productReviews.product, {cascade: true})
   reviews: ProductReviews[];
 
-  @OneToMany(() => ProductInventory, productInventory => productInventory.product, {cascade: true})
-  inventory: ProductInventory[];
+  @Column()
+  inventory: number;
 
   @OneToMany(() => Discounts, discounts => discounts.product, {cascade: true})
   discounts: Discounts[];

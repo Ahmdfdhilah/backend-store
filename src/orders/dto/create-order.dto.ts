@@ -3,6 +3,7 @@ import { z } from 'zod';
 export const CreateOrderItemDtoSchema = z.object({
   productId: z.string(),  
   quantity: z.number(),   
+  color: z.string(),            
 });
 
 const VaNumberSchema = z.object({
@@ -53,7 +54,7 @@ export const CreatePriceShippingDtoSchema = z.object({
 
 export const CreateOrderDtoSchema = z.object({
   userId: z.string(),              
-  total: z.number(),               
+  total: z.number(),    
   couponsId: z.string().optional(),          
   items: z.array(CreateOrderItemDtoSchema),    
   statusHistory: z.array(CreateOrderStatusDtoSchema),

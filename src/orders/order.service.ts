@@ -101,6 +101,7 @@ export class OrderService {
       const orderItem = this.orderItemRepository.create({
         product,
         quantity: item.quantity,
+        color: item.color,
         order: savedOrder
       });
       return await this.orderItemRepository.save(orderItem);
@@ -139,7 +140,6 @@ export class OrderService {
     await this.orderStatusHistoryRepository.save(orderStatusHistories);
     savedOrder.statusHistory = orderStatusHistories;
   
-    // Create and save shipping details
     const orderShippingDetails = this.shippingDetailsRepository.create({
       address: shippingDetails.address,
       city: shippingDetails.city,
@@ -259,6 +259,7 @@ export class OrderService {
         const orderItem = this.orderItemRepository.create({
           product,
           quantity: item.quantity,
+          color: item.color,
           order,
         });
         await this.orderItemRepository.save(orderItem);
@@ -292,7 +293,6 @@ export class OrderService {
       });
     }
     
-
     if (shippingDetails) {
       await this.shippingDetailsRepository.delete({ order });
       const orderShippingDetails = this.shippingDetailsRepository.create({

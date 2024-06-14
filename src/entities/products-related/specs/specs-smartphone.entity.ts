@@ -80,9 +80,6 @@ export class SpecsSmartphone {
   charging: string; // Charging: 33W wired
 
   @Column()
-  color: string; // Colors: Black, Blue, Silver
-
-  @Column()
   screenType: string; // ScreenType: IPS LCD, 120Hz, 550 nits
 
   @Column()

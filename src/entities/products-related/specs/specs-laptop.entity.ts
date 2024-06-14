@@ -25,9 +25,6 @@ export class SpecsLaptop {
   ssd: string; // SSD
 
   @Column()
-  color: string; //color
-
-  @Column()
   operatingSystem: string; // Operating system
 
   @Column()

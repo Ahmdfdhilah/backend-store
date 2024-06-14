@@ -8,7 +8,7 @@ import { Discounts } from '../entities/products-related/discounts.entity';
 import { User } from 'src/entities/users-related/user.entity';
 import { SpecsSmartphone } from 'src/entities/products-related/specs/specs-smartphone.entity';
 import { SpecsLaptop } from 'src/entities/products-related/specs/specs-laptop.entity';
-import { SpecsTablet } from 'src/entities/products-related/specs/specs-tablet.entity'; 
+import { SpecsTablet } from 'src/entities/products-related/specs/specs-tablet.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Cache } from 'cache-manager';
@@ -27,7 +27,7 @@ export class ProductService {
     @InjectRepository(SpecsLaptop) private readonly specsLaptopRepository: Repository<SpecsLaptop>,
     @InjectRepository(SpecsTablet) private readonly specsTabletRepository: Repository<SpecsTablet>,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
-  ) {}
+  ) { }
 
   async findAll(): Promise<Product[]> {
     const cacheKey = 'products';
@@ -39,10 +39,10 @@ export class ProductService {
     }
 
     const products = await this.productRepository.find({
-      relations: ['inventory', 'reviews', 'discounts', 'laptopSpecs', 'smartphoneSpecs', 'tabletSpecs'],
+      relations: ['reviews', 'discounts', 'laptopSpecs', 'smartphoneSpecs', 'tabletSpecs'],
     });
     this.logger.log('Setting products to cache');
-    await this.cacheManager.set(cacheKey, products,  10000 );
+    await this.cacheManager.set(cacheKey, products, 10000);
     return products;
   }
 
@@ -57,32 +57,21 @@ export class ProductService {
 
     const product = await this.productRepository.findOne({
       where: { id },
-      relations: ['inventory', 'reviews', 'discounts', 'laptopSpecs', 'smartphoneSpecs', 'tabletSpecs'],
+      relations: ['reviews', 'discounts', 'laptopSpecs', 'smartphoneSpecs', 'tabletSpecs'],
     });
     if (!product) {
       throw new NotFoundException(`Product with ID ${id} not found`);
     }
     this.logger.log(`Setting product with ID: ${id} to cache`);
-    await this.cacheManager.set(cacheKey, product, 10000 );
+    await this.cacheManager.set(cacheKey, product, 10000);
     return product;
   }
 
   async create(createProductDto: CreateProductDto, imgSrc: string): Promise<Product> {
-    const { name, price, weight, inventory, reviews, discounts, category, tabletSpecs, smartphoneSpecs, laptopSpecs } = createProductDto;
+    const { name, price, weight, color, inventory, reviews, discounts, category, tabletSpecs, smartphoneSpecs, laptopSpecs } = createProductDto;
 
-    const product = this.productRepository.create({ name, price, category, weight, imgSrc});
+    const product = this.productRepository.create({ name, price, category, weight, imgSrc, color, inventory });
     const newProduct = await this.productRepository.save(product);
-
-    if (inventory) {
-      const inventoryEntities = inventory.map(item => {
-        const inventoryEntity = new ProductInventory();
-        inventoryEntity.stock = item.stock;
-        inventoryEntity.product = newProduct;
-        return inventoryEntity;
-      });
-      await this.productInventoryRepository.save(inventoryEntities);
-      newProduct.inventory = inventoryEntities;
-    }
 
     if (reviews) {
       const reviewEntities = await Promise.all(reviews.map(async item => {
@@ -140,15 +129,17 @@ export class ProductService {
     await this.cacheManager.del('products');
     this.logger.log('Cleared products cache');
     return this.findOne(newProduct.id);
+
   }
 
   async update(id: string, updateProductDto: UpdateProductDto, imgSrc?: string): Promise<Product> {
-    const { name, price, category,weight, tabletSpecs, smartphoneSpecs, laptopSpecs} = updateProductDto;
+    const { name, price, category, color, weight, tabletSpecs, smartphoneSpecs, laptopSpecs } = updateProductDto;
 
     console.log(tabletSpecs, smartphoneSpecs, laptopSpecs);
-    
-    let product = await this.productRepository.findOne({where: {id} ,
-      relations: ['inventory', 'reviews', 'discounts', 'laptopSpecs', 'smartphoneSpecs', 'tabletSpecs'],
+
+    let product = await this.productRepository.findOne({
+      where: { id },
+      relations: ['reviews', 'discounts', 'laptopSpecs', 'smartphoneSpecs', 'tabletSpecs'],
     });
     if (!product) {
       throw new NotFoundException(`Product with ID ${id} not found`);
@@ -159,6 +150,7 @@ export class ProductService {
     product.category = category ?? product.category;
     product.weight = weight ?? product.weight;
     product.imgSrc = imgSrc ?? product.imgSrc;
+    product.color = color ?? product.color;
 
     if (smartphoneSpecs !== undefined) {
       if (!product.smartphoneSpecs) {
@@ -178,7 +170,7 @@ export class ProductService {
       product.laptopSpecs.product = product;
       await this.specsLaptopRepository.remove(product.laptopSpecs);
       await this.specsLaptopRepository.save(product.laptopSpecs);
-    } 
+    }
 
     if (tabletSpecs !== undefined) {
       if (!product.tabletSpecs) {
@@ -192,20 +184,21 @@ export class ProductService {
 
     await this.productRepository.save(product);
 
-    return this.productRepository.findOne({where: {id}, 
-      relations: ['inventory', 'reviews', 'discounts', 'laptopSpecs', 'smartphoneSpecs', 'tabletSpecs'],
+    return this.productRepository.findOne({
+      where: { id },
+      relations: ['reviews', 'discounts', 'laptopSpecs', 'smartphoneSpecs', 'tabletSpecs'],
     });
   }
 
   async remove(id: string): Promise<void> {
     const product = await this.productRepository.findOne({
       where: { id },
-      relations: ['inventory', 'reviews', 'discounts', 'laptopSpecs', 'smartphoneSpecs', 'tabletSpecs'],
+      relations: ['reviews', 'discounts', 'laptopSpecs', 'smartphoneSpecs', 'tabletSpecs'],
     });
     if (!product) {
       throw new NotFoundException(`Product with ID ${id} not found`);
     }
-  
+
     if (product.smartphoneSpecs) {
       product.smartphoneSpecs.product = null;
       await this.specsSmartphoneRepository.save(product.smartphoneSpecs);
@@ -218,7 +211,7 @@ export class ProductService {
       product.tabletSpecs.product = null;
       await this.specsTabletRepository.save(product.tabletSpecs);
     }
-  
+
     if (product.smartphoneSpecs) {
       await this.specsSmartphoneRepository.remove(product.smartphoneSpecs);
     }
@@ -228,22 +221,11 @@ export class ProductService {
     if (product.tabletSpecs) {
       await this.specsTabletRepository.remove(product.tabletSpecs);
     }
-  
+
     await this.productInventoryRepository.delete({ product });
     await this.productReviewsRepository.delete({ product });
     await this.discountsRepository.delete({ product });
     await this.productRepository.delete(id);
   }
-  async updateProductImage(productId: string, imageUrl: string): Promise<void> {
-    const product = await this.productRepository.findOne({where:{id: productId}});
 
-    if (!product) {
-      throw new Error(`Product not found with ID ${productId}`);
-    }
-
-    product.imgSrc = imageUrl;
-
-    await this.productRepository.save(product);
-  }
-  
 }

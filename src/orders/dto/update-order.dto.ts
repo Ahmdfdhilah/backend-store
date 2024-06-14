@@ -3,7 +3,7 @@ import { CreateOrderItemDtoSchema, CreateOrderStatusDtoSchema, CreateShippingDet
 
 export const UpdateOrderDtoSchema = z.object({
   userId: z.string(),                        
-  total: z.number(),                          
+  total: z.number(),                         
   couponsId: z.string().optional(),            
   items: z.array(CreateOrderItemDtoSchema), 
   statusHistory: z.array(CreateOrderStatusDtoSchema), 

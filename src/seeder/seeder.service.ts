@@ -48,6 +48,8 @@ export class SeederService {
         price: 25000000,
         imgSrc: "/img/products/",
         weight: 1500,
+        inventory: 21,
+        color: ["Eclipse Gray"],
         laptopSpecs: {
           brand: "Asus",
           model: "ROG Zephyrus G14",
@@ -55,7 +57,6 @@ export class SeederService {
           ram: "16 GB DDR4",
           size: "14 inches",
           ssd: "512 GB NVMe PCIe 3.0",
-          color: "Eclipse Gray",
           operatingSystem: "Windows 10 Home",
           hardDisk: "No",
           modelNumber: "GA401IV-BR9N6",
@@ -88,7 +89,6 @@ export class SeederService {
           dedicatedGraphicMemoryType: "GDDR6",
           expandableRAM: "No"
         },
-        inventory: [],
         reviews: [],
         discounts: [],
         category: "laptop"
@@ -98,6 +98,8 @@ export class SeederService {
         price: 30000000,
         imgSrc: "/img/products/",
         weight: 1400,
+        inventory: 21,
+        color: ["Platinum Silver" ,"Black Carbon Fiber"],
         laptopSpecs: {
           brand: "Dell",
           model: "XPS 15",
@@ -105,7 +107,6 @@ export class SeederService {
           ram: "32 GB DDR4",
           size: "15.6 inches",
           ssd: "1 TB PCIe NVMe SSD",
-          color: "Platinum Silver with Black Carbon Fiber Palmrest",
           operatingSystem: "Windows 10 Pro",
           hardDisk: "No",
           modelNumber: "XPS7590-7541SLV-PUS",
@@ -138,7 +139,6 @@ export class SeederService {
           dedicatedGraphicMemoryType: "GDDR5",
           expandableRAM: "No"
         },
-        inventory: [],
         reviews: [],
         discounts: [],
         category: "laptop"
@@ -148,6 +148,8 @@ export class SeederService {
         price: 22000000,
         imgSrc: "/img/products/",
         weight: 1300,
+        inventory: 21,
+        color: ["Poseidon Blue with Pale Brass accents"],
         laptopSpecs: {
           brand: "HP",
           model: "Spectre x360",
@@ -155,7 +157,6 @@ export class SeederService {
           ram: "16 GB LPDDR4X-3733 SDRAM",
           size: "13.3 inches",
           ssd: "1 TB PCIe NVMe SSD",
-          color: "Poseidon Blue with Pale Brass accents",
           operatingSystem: "Windows 10 Home 64",
           hardDisk: "No",
           modelNumber: "13-aw0043dx",
@@ -188,7 +189,6 @@ export class SeederService {
           dedicatedGraphicMemoryType: "Integrated",
           expandableRAM: "No"
         },
-        inventory: [],
         reviews: [],
         discounts: [],
         category: "laptop"
@@ -198,6 +198,8 @@ export class SeederService {
         price: 27000000,
         imgSrc: "/img/products/",
         weight:1000,
+        inventory: 21,
+        color: ["Black"],
         laptopSpecs: {
           brand: "Lenovo",
           model: "ThinkPad X1 Carbon",
@@ -205,7 +207,6 @@ export class SeederService {
           ram: "16 GB LPDDR3 2133MHz",
           size: "14 inches",
           ssd: "512 GB PCIe NVMe M.2 SSD",
-          color: "Black",
           operatingSystem: "Windows 10 Pro 64",
           hardDisk: "No",
           modelNumber: "20QD000BUS",
@@ -238,7 +239,6 @@ export class SeederService {
           dedicatedGraphicMemoryType: "Integrated",
           expandableRAM: "No"
         },
-        inventory: [],
         reviews: [],
         discounts: [],
         category: "laptop"
@@ -248,6 +248,8 @@ export class SeederService {
         price: 40000000,
         imgSrc: "/img/products/",
         weight:2000,
+        inventory:32,
+        color: ["Silver"],
         laptopSpecs: {
           brand: "Apple",
           model: "MacBook Pro 16-inch",
@@ -255,7 +257,6 @@ export class SeederService {
           ram: "64 GB DDR4",
           size: "16 inches",
           ssd: "2 TB SSD",
-          color: "Silver",
           operatingSystem: "macOS",
           hardDisk: "No",
           modelNumber: "MVVK2LL/A",
@@ -288,7 +289,6 @@ export class SeederService {
           dedicatedGraphicMemoryType: "GDDR6",
           expandableRAM: "No"
         },
-        inventory: [],
         reviews: [],
         discounts: [],
         category: "laptop"
@@ -297,6 +297,8 @@ export class SeederService {
         price: 20000000,
         imgSrc: "/img/products/",
         weight:228,
+        inventory: 43,
+        color: ["Phantom Black", "Phantom White", "Phantom Green", "Phantom Pink"],
         smartphoneSpecs: {
           brand: "Samsung",
           model: "Galaxy S22 Ultra",
@@ -322,7 +324,6 @@ export class SeederService {
           usb: "USB Type-C 4.0, USB On-The-Go",
           batteryType: "Li-Ion 5000 mAh, non-removable",
           charging: "Fast charging 65W, 100% in 30 min (advertised)",
-          color: "Phantom Black, Phantom White, Phantom Green, Phantom Pink",
           screenType: "Dynamic AMOLED 2X, 120Hz, HDR10+, 1500 nits (peak)",
           screenSize: "6.8 inches, 114.2 cm2 (~92.0% screen-to-body ratio)",
           resolution: "1440 x 3200 pixels, 20:9 ratio (~516 ppi density)",
@@ -331,7 +332,6 @@ export class SeederService {
           build: "Glass front (Gorilla Glass Victus+), glass back (Gorilla Glass Victus+), aluminum frame",
           sim: "Single SIM (Nano-SIM and/or eSIM) or Dual SIM (Nano-SIM and/or eSIM, dual stand-by)",
         },
-        inventory: [],
         reviews: [],
         discounts: [],
         category: "smartphone"
@@ -341,6 +341,8 @@ export class SeederService {
         price: 23000000,
         imgSrc: "/img/products/",
         weight:238,
+        inventory: 32,
+        color: ["Graphite", "Gold", "Silver", "Sierra Blue"],
         smartphoneSpecs: {
           brand: "Apple",
           model: "iPhone 14 Pro Max",
@@ -366,7 +368,6 @@ export class SeederService {
           usb: "Lightning, USB 2.0",
           batteryType: "Li-Ion 4500 mAh, non-removable",
           charging: "Fast charging 27W, 50% in 30 min (advertised)",
-          color: "Graphite, Gold, Silver, Sierra Blue",
           screenType: "Super Retina XDR OLED, HDR10, Dolby Vision, 1000 nits (typ), 1600 nits (peak)",
           screenSize: "6.7 inches, 110.3 cm2 (~88.3% screen-to-body ratio)",
           resolution: "1284 x 2778 pixels, 19.5:9 ratio (~456 ppi density)",
@@ -375,7 +376,6 @@ export class SeederService {
           build: "Glass front (Ceramic Shield), glass back (Ceramic Shield), stainless steel frame",
           sim: "Single SIM (Nano-SIM and/or eSIM) or Dual SIM (Nano-SIM, dual stand-by) - for China",
         },
-        inventory: [],
         reviews: [],
         discounts: [],
         category: "smartphone"
@@ -385,6 +385,8 @@ export class SeederService {
         price: 18000000,
         imgSrc: "/img/products/",
         weight:197,
+        inventory: 32,
+        color: ["Morning Mist", "Starlight Black", "Green Haze"],
         smartphoneSpecs: {
           brand: "OnePlus",
           model: "10 Pro",
@@ -410,7 +412,6 @@ export class SeederService {
           usb: "USB Type-C 4.2, USB On-The-Go",
           batteryType: "Li-Po 5000 mAh, non-removable",
           charging: "Fast charging 80W, 100% in 32 min (advertised)",
-          color: "Morning Mist, Starlight Black, Green Haze",
           screenType: "Fluid AMOLED, 120Hz, HDR10+, 1300 nits (peak)",
           screenSize: "6.7 inches, 108.4 cm2 (~90.7% screen-to-body ratio)",
           resolution: "1440 x 3216 pixels, 20:9 ratio (~526 ppi density)",
@@ -419,7 +420,6 @@ export class SeederService {
           build: "Glass front (Gorilla Glass 5), glass back (Gorilla Glass 5), aluminum frame",
           sim: "Dual SIM (Nano-SIM, dual stand-by)",
         },
-        inventory: [],
         reviews: [],
         discounts: [],
         category: "smartphone"
@@ -429,6 +429,8 @@ export class SeederService {
         price: 3500000,
         imgSrc: "/img/products/",
         weight:179,
+        inventory: 21,
+        color: ["Glacier Blue", "Phantom Green", "Frost White", "Midnight Black"],
         smartphoneSpecs: {
           brand: "Xiaomi",
           model: "Redmi Note 13 Pro",
@@ -454,7 +456,6 @@ export class SeederService {
           usb: "USB Type-C 2.0",
           batteryType: "Li-Po 5000 mAh, non-removable",
           charging: "Fast charging 33W",
-          color: "Glacier Blue, Phantom Green, Frost White, Midnight Black",
           screenType: "Super AMOLED, 90Hz, 350 nits (typ)",
           screenSize: "6.67 inches, 107.4 cm2 (~85.9% screen-to-body ratio)",
           resolution: "1080 x 2400 pixels, 20:9 ratio (~395 ppi density)",
@@ -463,7 +464,6 @@ export class SeederService {
           build: "Glass front (Gorilla Glass 5), plastic back, plastic frame",
           sim: "Dual SIM (Nano-SIM, dual stand-by)",
         },
-        inventory: [],
         reviews: [],
         discounts: [],
         category: "smartphone"
@@ -473,6 +473,8 @@ export class SeederService {
         price: 3000000,
         imgSrc: "/img/products/",
         weight:440,
+        inventory: 39,
+        color: ["Gray", "Gold"],
         tabletSpecs: {
           brand: "Realme",
           model: "Pad",
@@ -481,7 +483,6 @@ export class SeederService {
           weight: "440 g (Wi-Fi)/ 450 g (LTE) (15.52 oz)",
           batteryCapacity: "7100 mAh",
           removableBattery: "No",
-          color: "Gray, Gold",
           screenSize: "10.4 inches, 307.9 cm2 (~80.3% screen-to-body ratio)",
           touchscreen: true,
           resolution: "1200 x 2000 pixels, 5:3 ratio (~224 ppi density)",
@@ -513,7 +514,6 @@ export class SeederService {
           barometer: false,
           temperatureSensor: false,
         },
-        inventory: [],
         reviews: [],
         discounts: [],
         category: "tablet"
@@ -523,6 +523,8 @@ export class SeederService {
         price: 14000000,
         imgSrc: "/img/products/",
         weight:580,
+        inventory: 29,
+        color: ["Phantom Black", "Phantom Silver"],
         tabletSpecs: {
           brand: "Samsung",
           model: "Galaxy Tab S8 Ultra",
@@ -531,7 +533,6 @@ export class SeederService {
           weight: "580 g (Wi-Fi), 585 g (5G) (1.28 lb)",
           batteryCapacity: "11000 mAh",
           removableBattery: "No",
-          color: "Phantom Black, Phantom Silver",
           screenSize: "14.6 inches, 316.9 cm2 (~86.6% screen-to-body ratio)",
           touchscreen: true,
           resolution: "1752 x 2800 pixels (~189 ppi density)",
@@ -563,7 +564,6 @@ export class SeederService {
           barometer: true,
           temperatureSensor: false,
         },
-        inventory: [],
         reviews: [],
         discounts: [],
         category: "tablet"
@@ -573,6 +573,8 @@ export class SeederService {
         price: 9000000,
         imgSrc: "/img/products/",
         weight:460,
+        inventory: 49,
+        color: ["Space Gray", "Starlight", "Pink", "Purple", "Blue"],
         tabletSpecs: {
           brand: "Apple",
           model: "iPad Air (2023)",
@@ -581,7 +583,6 @@ export class SeederService {
           weight: "460 g (Wi-Fi), 462 g (5G) (1.01 lb)",
           batteryCapacity: "7606 mAh",
           removableBattery: "No",
-          color: "Space Gray, Starlight, Pink, Purple, Blue",
           screenSize: "10.9 inches, 359.2 cm2 (~82.9% screen-to-body ratio)",
           touchscreen: true,
           resolution: "1640 x 2360 pixels (~264 ppi density)",
@@ -614,7 +615,6 @@ export class SeederService {
           barometer: false,
           temperatureSensor: false,
         },
-        inventory: [],
         reviews: [],
         discounts: [],
         category: "tablet"
@@ -623,6 +623,8 @@ export class SeederService {
         price: 9000000,
         imgSrc: "/img/products/",
         weight:460,
+        inventory: 28,
+        color: ["Space Gray", "Starlight", "Pink", "Purple", "Blue"],
         tabletSpecs: {
           brand: "Apple",
           model: "iPad Air (2023)",
@@ -631,7 +633,6 @@ export class SeederService {
           weight: "460 g (Wi-Fi), 462 g (5G) (1.01 lb)",
           batteryCapacity: "7606 mAh",
           removableBattery: "No",
-          color: "Space Gray, Starlight, Pink, Purple, Blue",
           screenSize: "10.9 inches, 359.2 cm2 (~82.9% screen-to-body ratio)",
           touchscreen: true,
           resolution: "1640 x 2360 pixels (~264 ppi density)",
@@ -664,7 +665,6 @@ export class SeederService {
           barometer: false,
           temperatureSensor: false,
         },
-        inventory: [],
         reviews: [],
         discounts: [],
         category: "tablet"
@@ -674,6 +674,8 @@ export class SeederService {
         price: 15000000,
         imgSrc: "/img/products/",
         weight:575,
+        inventory: 102,
+        color: ["Mystic Black", "Mystic White", "Mystic Bronze"],
         tabletSpecs: {
           brand: "Samsung",
           model: "Galaxy Tab S8 Ultra",
@@ -682,7 +684,6 @@ export class SeederService {
           weight: "575 g (1.27 lb)",
           batteryCapacity: "12000 mAh",
           removableBattery: "No",
-          color: "Mystic Black, Mystic White, Mystic Bronze",
           screenSize: "14.6 inches, 326.9 cm2 (~85.4% screen-to-body ratio)",
           touchscreen: true,
           resolution: "2800 x 1752 pixels (~267 ppi density)",
@@ -715,7 +716,6 @@ export class SeederService {
           barometer: false,
           temperatureSensor: false,
         },
-        inventory: [],
         reviews: [],
         discounts: [],
         category: "tablet"
@@ -725,6 +725,8 @@ export class SeederService {
         price: 13000000,
         imgSrc: "/img/products/",
         weight:609,
+        inventory: 100,
+        color: ["Gray", "White", "Green"],
         tabletSpecs: {
           brand: "Huawei",
           model: "MatePad Pro 12.6",
@@ -733,7 +735,6 @@ export class SeederService {
           weight: "609 g (1.34 lb)",
           batteryCapacity: "10000 mAh",
           removableBattery: "No",
-          color: "Gray, White, Green",
           screenSize: "12.6 inches, 320.0 cm2 (~87.2% screen-to-body ratio)",
           touchscreen: true,
           resolution: "2560 x 1600 pixels, 16:10 ratio (~240 ppi density)",
@@ -766,7 +767,6 @@ export class SeederService {
           barometer: false,
           temperatureSensor: false,
         },
-        inventory: [],
         reviews: [],
         discounts: [],
         category: "tablet"

@@ -28,9 +28,6 @@ export class SpecsTablet {
   removableBattery: string; // Removable battery
 
   @Column()
-  color: string; // Color
-
-  @Column()
   screenSize: string; // Screen size (inches)
 
   @Column({ default: true })

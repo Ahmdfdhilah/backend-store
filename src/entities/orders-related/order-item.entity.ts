@@ -17,4 +17,8 @@ export class OrderItem {
 
   @Column('int')
   quantity: number;
+  
+  @Column()
+  color: string;
+  
 }

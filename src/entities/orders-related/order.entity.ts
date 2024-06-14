@@ -15,7 +15,7 @@ export class Order {
 
   @Column()
   total: number;
-  
+
   @Column({ nullable: true }) 
   snapToken: string = "";
 
