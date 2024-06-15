@@ -7,9 +7,10 @@ import { SeederService } from './seeder.service';
 import { SpecsLaptop } from 'src/entities/products-related/specs/specs-laptop.entity';
 import { SpecsSmartphone } from 'src/entities/products-related/specs/specs-smartphone.entity';
 import { SpecsTablet } from 'src/entities/products-related/specs/specs-tablet.entity';
+import { Discounts } from 'src/entities/products-related/discounts.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Product, Order, SpecsLaptop, SpecsSmartphone, SpecsTablet])],
+  imports: [TypeOrmModule.forFeature([User, Product, Order, SpecsLaptop, SpecsSmartphone, SpecsTablet, Discounts])],
   providers: [SeederService],
   exports: [SeederService],
 })

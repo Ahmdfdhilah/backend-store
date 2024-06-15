@@ -9,9 +9,9 @@ export class Discounts {
   @OneToOne(() => Product, product => product.discounts)
   product: Product;
 
-  @Column()
+  @Column({nullable:true})
   discount: number;
 
-  @Column()
+  @Column({nullable:true})
   expires_at: Date;
 }

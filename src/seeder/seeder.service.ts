@@ -7,12 +7,14 @@ import * as bcrypt from 'bcryptjs';
 import { SpecsLaptop } from 'src/entities/products-related/specs/specs-laptop.entity';
 import { SpecsSmartphone } from 'src/entities/products-related/specs/specs-smartphone.entity';
 import { SpecsTablet } from 'src/entities/products-related/specs/specs-tablet.entity';
+import { Discounts } from 'src/entities/products-related/discounts.entity';
 
 @Injectable()
 export class SeederService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     @InjectRepository(Product) private readonly productRepository: Repository<Product>,
+    @InjectRepository(Discounts) private readonly discountRepository: Repository<Discounts>,
     @InjectRepository(SpecsSmartphone) private readonly specsSmartphoneRepository: Repository<SpecsSmartphone>,
     @InjectRepository(SpecsLaptop) private readonly specsLaptopRepository: Repository<SpecsLaptop>,
     @InjectRepository(SpecsTablet) private readonly specsTabletRepository: Repository<SpecsTablet>,
@@ -24,7 +26,7 @@ export class SeederService {
     if (userCount === 0) {
       await this.seedUsers();
     }
-    if (productCount === 0){
+    if (productCount === 0) {
       await this.seedProducts();
     }
   }
@@ -90,7 +92,10 @@ export class SeederService {
           expandableRAM: "No"
         },
         reviews: [],
-        discounts: [],
+        discounts: {
+          discount: 15,
+          expires_at: "2024-01-10T00:00:00.000Z"
+        },
         category: "laptop"
       },
       {
@@ -99,7 +104,7 @@ export class SeederService {
         imgSrc: "http://localhost:3000/public/upload/products/DellXPS15-1.jpg",
         weight: 1400,
         inventory: 21,
-        color: ["Platinum Silver" ,"Black Carbon Fiber"],
+        color: ["Platinum Silver", "Black Carbon Fiber"],
         laptopSpecs: {
           brand: "Dell",
           model: "XPS 15",
@@ -140,7 +145,10 @@ export class SeederService {
           expandableRAM: "No"
         },
         reviews: [],
-        discounts: [],
+        discounts: {
+          discount: 16,
+          expires_at: "2024-01-10T00:00:00.000Z"
+        },
         category: "laptop"
       },
       {
@@ -190,14 +198,13 @@ export class SeederService {
           expandableRAM: "No"
         },
         reviews: [],
-        discounts: [],
         category: "laptop"
       },
       {
         name: "Lenovo ThinkPad X1 Carbon",
         price: 27000000,
         imgSrc: "http://localhost:3000/public/upload/products/LenovoThinkPadX1Carbon-1.jpg",
-        weight:1000,
+        weight: 1000,
         inventory: 21,
         color: ["Black"],
         laptopSpecs: {
@@ -240,15 +247,14 @@ export class SeederService {
           expandableRAM: "No"
         },
         reviews: [],
-        discounts: [],
         category: "laptop"
       },
       {
         name: "Apple MacBook Pro 16-inch",
         price: 40000000,
         imgSrc: "http://localhost:3000/public/upload/products/AppleMacBookPro16-inch-1.jpg",
-        weight:2000,
-        inventory:32,
+        weight: 2000,
+        inventory: 32,
         color: ["Silver"],
         laptopSpecs: {
           brand: "Apple",
@@ -290,13 +296,12 @@ export class SeederService {
           expandableRAM: "No"
         },
         reviews: [],
-        discounts: [],
         category: "laptop"
-      },{
+      }, {
         name: "Samsung Galaxy S22 Ultra",
         price: 20000000,
         imgSrc: "http://localhost:3000/public/upload/products/SamsungGalaxyTabS8Ultra-1.jpg",
-        weight:228,
+        weight: 228,
         inventory: 43,
         color: ["Phantom Black", "Phantom White", "Phantom Green", "Phantom Pink"],
         smartphoneSpecs: {
@@ -333,14 +338,17 @@ export class SeederService {
           sim: "Single SIM (Nano-SIM and/or eSIM) or Dual SIM (Nano-SIM and/or eSIM, dual stand-by)",
         },
         reviews: [],
-        discounts: [],
+        discounts: {
+          discount: 15,
+          expires_at: "2024-01-10T00:00:00.000Z"
+        },
         category: "smartphone"
       },
       {
         name: "iPhone 14 Pro Max",
         price: 23000000,
         imgSrc: "http://localhost:3000/public/upload/products/iPhone14ProMax-1.jpg",
-        weight:238,
+        weight: 238,
         inventory: 32,
         color: ["Graphite", "Gold", "Silver", "Sierra Blue"],
         smartphoneSpecs: {
@@ -377,14 +385,13 @@ export class SeederService {
           sim: "Single SIM (Nano-SIM and/or eSIM) or Dual SIM (Nano-SIM, dual stand-by) - for China",
         },
         reviews: [],
-        discounts: [],
         category: "smartphone"
       },
       {
         name: "OnePlus 10 Pro",
         price: 18000000,
         imgSrc: "http://localhost:3000/public/upload/products/OnePlus10Pro-1.jpg",
-        weight:197,
+        weight: 197,
         inventory: 32,
         color: ["Morning Mist", "Starlight Black", "Green Haze"],
         smartphoneSpecs: {
@@ -421,14 +428,13 @@ export class SeederService {
           sim: "Dual SIM (Nano-SIM, dual stand-by)",
         },
         reviews: [],
-        discounts: [],
         category: "smartphone"
       },
       {
         name: "Xiaomi Redmi Note 13 Pro",
         price: 3500000,
         imgSrc: "http://localhost:3000/public/upload/products/XiaomiRedmiNote13Pro-2.jpg",
-        weight:179,
+        weight: 179,
         inventory: 21,
         color: ["Glacier Blue", "Phantom Green", "Frost White", "Midnight Black"],
         smartphoneSpecs: {
@@ -465,14 +471,13 @@ export class SeederService {
           sim: "Dual SIM (Nano-SIM, dual stand-by)",
         },
         reviews: [],
-        discounts: [],
         category: "smartphone"
       },
       {
         name: "Realme Pad",
         price: 3000000,
         imgSrc: "http://localhost:3000/public/upload/products/RealmePad-1.jpg",
-        weight:440,
+        weight: 440,
         inventory: 39,
         color: ["Gray", "Gold"],
         tabletSpecs: {
@@ -515,14 +520,17 @@ export class SeederService {
           temperatureSensor: false,
         },
         reviews: [],
-        discounts: [],
+        discounts: {
+          discount: 12,
+          expires_at: "2024-01-10T00:00:00.000Z"
+        },
         category: "tablet"
       },
       {
         name: "Samsung Galaxy Tab S8 Ultra",
         price: 14000000,
         imgSrc: "http://localhost:3000/public/upload/products/SamsungGalaxyTabS8Ultra-1.jpg",
-        weight:580,
+        weight: 580,
         inventory: 29,
         color: ["Phantom Black", "Phantom Silver"],
         tabletSpecs: {
@@ -565,14 +573,17 @@ export class SeederService {
           temperatureSensor: false,
         },
         reviews: [],
-        discounts: [],
+        discounts: {
+          discount: 12,
+          expires_at: "2024-01-10T00:00:00.000Z"
+        },
         category: "tablet"
       },
       {
         name: "iPad Air (2023)",
         price: 9000000,
         imgSrc: "http://localhost:3000/public/upload/products/iPadAir(2023)-1.jpg",
-        weight:460,
+        weight: 460,
         inventory: 49,
         color: ["Space Gray", "Starlight", "Pink", "Purple", "Blue"],
         tabletSpecs: {
@@ -616,14 +627,13 @@ export class SeederService {
           temperatureSensor: false,
         },
         reviews: [],
-        discounts: [],
         category: "tablet"
       },
       {
         name: "Huawei MatePad Pro 12.6",
         price: 13000000,
         imgSrc: "http://localhost:3000/public/upload/products/HuaweiMatePadPro12.6-1.jpg",
-        weight:609,
+        weight: 609,
         inventory: 100,
         color: ["Gray", "White", "Green"],
         tabletSpecs: {
@@ -667,16 +677,19 @@ export class SeederService {
           temperatureSensor: false,
         },
         reviews: [],
-        discounts: [],
+        discounts: {
+          discount: 12,
+          expires_at: "2024-01-10T00:00:00.000Z"
+        },
         category: "tablet"
       }
     ];
-  
+
     for (const productData of products) {
       const { discounts, laptopSpecs, smartphoneSpecs, tabletSpecs, ...product } = productData;
       const newProduct = this.productRepository.create(product);
       await this.productRepository.save(newProduct);
-  
+
       if (smartphoneSpecs) {
         const specsSmartphoneEntity = new SpecsSmartphone();
         Object.assign(specsSmartphoneEntity, smartphoneSpecs);
@@ -684,7 +697,12 @@ export class SeederService {
         await this.specsSmartphoneRepository.save(specsSmartphoneEntity);
         newProduct.smartphoneSpecs = specsSmartphoneEntity;
       }
-  
+
+      if (discounts) {
+        const discountEntity = this.discountRepository.create(discounts);
+        await this.discountRepository.save(discountEntity);
+        newProduct.discounts = discountEntity;
+      }
       if (laptopSpecs) {
         const specsLaptopEntity = new SpecsLaptop();
         Object.assign(specsLaptopEntity, laptopSpecs);
@@ -692,7 +710,7 @@ export class SeederService {
         await this.specsLaptopRepository.save(specsLaptopEntity);
         newProduct.laptopSpecs = specsLaptopEntity;
       }
-  
+
       if (tabletSpecs) {
         const specsTabletEntity = new SpecsTablet();
         Object.assign(specsTabletEntity, tabletSpecs);
@@ -700,10 +718,10 @@ export class SeederService {
         await this.specsTabletRepository.save(specsTabletEntity);
         newProduct.tabletSpecs = specsTabletEntity;
       }
-  
+
       await this.productRepository.save(newProduct);
     }
   }
-  
+
 }
 
