@@ -1,7 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany,  OneToOne, JoinColumn, JoinTable } from 'typeorm';
 import { OrderItem } from '../orders-related/order-item.entity';
 import { ProductReviews } from './product-reviews.entity';
-import { ProductInventory } from './product-inventory.entity';
 import { Discounts } from './discounts.entity';
 import { SpecsLaptop } from './specs/specs-laptop.entity';
 import { SpecsSmartphone } from './specs/specs-smartphone.entity';
@@ -30,17 +29,18 @@ export class Product {
   @Column('simple-array')
   color: string[];
 
-  @OneToMany(() => OrderItem, orderItem => orderItem.product, {cascade: true})
+  @OneToMany(() => OrderItem, orderItem => orderItem.product, {cascade: true, nullable:true})
   orderItems: OrderItem[];
 
-  @OneToMany(() => ProductReviews, productReviews => productReviews.product, {cascade: true})
+  @OneToMany(() => ProductReviews, productReviews => productReviews.product, {cascade: true, nullable:true})
   reviews: ProductReviews[];
 
   @Column()
   inventory: number;
 
-  @OneToMany(() => Discounts, discounts => discounts.product, {cascade: true})
-  discounts: Discounts[];
+  @OneToOne(() => Discounts, discounts => discounts.product, {cascade: true, nullable:true})
+  @JoinColumn()
+  discounts: Discounts;
 
   @OneToOne(() => SpecsLaptop, { cascade: true, onDelete:"CASCADE" })
   @JoinColumn()

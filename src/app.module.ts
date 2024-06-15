@@ -2,7 +2,6 @@ import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { CacheModule } from '@nestjs/cache-manager';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-import { redisStore } from 'cache-manager-redis-store';
 import { UserModule } from './users/user.module';
 import { ProductModule } from './products/product.module';
 import { OrderModule } from './orders/order.module';
@@ -17,7 +16,6 @@ import { UserAddress } from './entities/users-related/user-address.entity';
 import { Discounts } from './entities/products-related/discounts.entity';
 import { OrderStatusHistory } from './entities/orders-related/order-status.entity';
 import { Payments } from './entities/orders-related/payments.entity';
-import { ProductInventory } from './entities/products-related/product-inventory.entity';
 import { ProductReviews } from './entities/products-related/product-reviews.entity';
 import { ShippingDetails } from './entities/orders-related/shipping-details.entity';
 import { UserDetails } from './entities/users-related/user-details.entity';
@@ -45,7 +43,7 @@ import { UserAddressModule } from './users/user-address/user-address.module';
       username: process.env.DB_USERNAME,
       database: process.env.DB_NAME,
       password: process.env.DB_PASSWORD,
-      entities: [User, Product, Order, OrderItem, UserAddress,  Discounts, OrderStatusHistory, Payments, ProductInventory, ProductReviews, ShippingDetails, UserDetails, SpecsLaptop, SpecsSmartphone, SpecsTablet],
+      entities: [User, Product, Order, OrderItem, UserAddress,  Discounts, OrderStatusHistory, Payments, ProductReviews, ShippingDetails, UserDetails, SpecsLaptop, SpecsSmartphone, SpecsTablet],
       synchronize: true,
     }),
     CacheModule.register({
@@ -54,7 +52,7 @@ import { UserAddressModule } from './users/user-address/user-address.module';
       host: process.env.REDIS_HOST || 'redis',
       port: parseInt(process.env.REDIS_PORT, 10) || 6379,
     }),
-    TypeOrmModule.forFeature([User, Product, Order, OrderItem, UserAddress, Discounts, OrderStatusHistory, Payments, ProductInventory, ProductReviews, ShippingDetails, UserDetails, SpecsLaptop, SpecsSmartphone, SpecsTablet]),
+    TypeOrmModule.forFeature([User, Product, Order, OrderItem, UserAddress, Discounts, OrderStatusHistory, Payments, ProductReviews, ShippingDetails, UserDetails, SpecsLaptop, SpecsSmartphone, SpecsTablet]),
     SeederModule,
     UserModule,
     ProductModule,

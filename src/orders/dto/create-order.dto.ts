@@ -1,7 +1,8 @@
 import { z } from 'zod';
 
 export const CreateOrderItemDtoSchema = z.object({
-  productId: z.string(),  
+  productId: z.string(),
+  productReviewsId: z.string().optional(),  
   quantity: z.number(),   
   color: z.string(),            
 });

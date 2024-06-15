@@ -19,17 +19,17 @@ export class Order {
   @Column({ nullable: true }) 
   snapToken: string = "";
 
-  @OneToMany(() => OrderItem, items => items.order, {cascade: true})
+  @OneToMany(() => OrderItem, items => items.order, {cascade: true, onDelete:"CASCADE"})
   items: OrderItem[];
 
-  @OneToMany(() => OrderStatusHistory, orderStatusHistory => orderStatusHistory.order, {cascade: true})
+  @OneToMany(() => OrderStatusHistory, orderStatusHistory => orderStatusHistory.order, {cascade: true, onDelete:"CASCADE"})
   statusHistory: OrderStatusHistory[];
 
-  @OneToOne(() => ShippingDetails, shippingDetails => shippingDetails.order, { cascade: true })
+  @OneToOne(() => ShippingDetails, shippingDetails => shippingDetails.order, { cascade: true , onDelete:"CASCADE"})
   @JoinColumn()
   shippingDetails: ShippingDetails;
 
-  @OneToMany(() => Payments, payments => payments.order, {cascade:true})
+  @OneToMany(() => Payments, payments => payments.order, {cascade:true, onDelete:"CASCADE"})
   payments: Payments[];
 
 }

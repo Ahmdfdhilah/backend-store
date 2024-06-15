@@ -6,118 +6,118 @@ export class SpecsLaptop {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ nullable: true })
   brand: string; // Brand
 
-  @Column()
+  @Column({ nullable: true })
   model: string; // Model
 
-  @Column()
+  @Column({ nullable: true })
   company: string; // Company
 
-  @Column()
+  @Column({ nullable: true })
   ram: string; // RAM
 
-  @Column()
+  @Column({ nullable: true })
   size: string; // Size
 
-  @Column()
+  @Column({ nullable: true })
   ssd: string; // SSD
 
-  @Column()
+  @Column({ nullable: true })
   operatingSystem: string; // Operating system
 
-  @Column()
+  @Column({ nullable: true })
   hardDisk: string; // Hard disk
 
-  @Column()
+  @Column({ nullable: true })
   modelNumber: string; // Model Number
 
-  @Column()
+  @Column({ nullable: true })
   processor: string; // Processor
 
-  @Column()
+  @Column({ nullable: true })
   graphicsProcessor: string; // Graphics Processor
 
-  @Column()
+  @Column({ nullable: true })
   dedicatedGraphics: string; // Dedicated Graphics
 
-  @Column()
+  @Column({ nullable: true })
   fingerprintSensor: string; // Finger Print Sensor
 
-  @Column()
+  @Column({ nullable: true })
   resolution: string; // Resolution
 
-  @Column()
+  @Column({ nullable: true })
   wifiStandardsSupported: string; // Wi-Fi standards supported
 
-  @Column()
+  @Column({ nullable: true })
   weight: string; // Weight (kg)
 
-  @Column()
+  @Column({ nullable: true })
   dimensions: string; // Dimensions (mm)
 
-  @Column()
+  @Column({ nullable: true })
   bluetoothVersion: string; // Bluetooth version
 
-  @Column()
+  @Column({ nullable: true })
   numberOfUSBPorts: string; // Number of USB Ports
 
-  @Column()
+  @Column({ nullable: true })
   series: string; // Series
 
-  @Column()
+  @Column({ nullable: true })
   internalMic: string; // Internal Mic
 
-  @Column()
+  @Column({ nullable: true })
   touchScreen: string; // Touch Screen
 
-  @Column()
+  @Column({ nullable: true })
   baseClockSpeed: string; // Base Clock Speed
 
-  @Column()
+  @Column({ nullable: true })
   productName: string; // Product Name
 
-  @Column()
+  @Column({ nullable: true })
   touchpad: string; // Touchpad
 
-  @Column()
+  @Column({ nullable: true })
   batteryCell: string; // Battery Cell
 
-  @Column()
+  @Column({ nullable: true })
   pointerDevice: string; // Pointer Device
 
-  @Column()
+  @Column({ nullable: true })
   cache: string; // Cache
 
-  @Column()
+  @Column({ nullable: true })
   micIn: string; // Mic In
 
-  @Column()
+  @Column({ nullable: true })
   speakers: string; // Speakers
 
-  @Column()
+  @Column({ nullable: true })
   multiCardSlot: string;
 
-  @Column()
+  @Column({ nullable: true })
   rj45LAN: string;
 
-  @Column()
+  @Column({ nullable: true })
   hdmiPort: string;
 
-  @Column()
+  @Column({ nullable: true })
   ethernet: string; 
 
-  @Column()
+  @Column({ nullable: true })
   batteryLife: string;
 
-  @Column()
+  @Column({ nullable: true })
   dedicatedGraphicMemoryType: string; 
 
-  @Column()
+  @Column({ nullable: true })
   expandableRAM: string; 
 
-  @OneToOne(() => Product, {cascade: true, onDelete:"CASCADE"})
+  @OneToOne(() => Product, { cascade: true, onDelete: "CASCADE" })
   @JoinColumn()
   product: Product;
 }

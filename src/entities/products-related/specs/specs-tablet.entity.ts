@@ -6,118 +6,118 @@ export class SpecsTablet {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
-  brand: string; // Brand
-
-  @Column()
-  model: string; // Model
+  @Column({ nullable: true })
+  brand: string | null; // Brand
 
   @Column({ nullable: true })
-  launched: string; // Launched
+  model: string | null; // Model
 
-  @Column()
-  dimensions: string; // Dimensions (mm)
+  @Column({ nullable: true })
+  launched: string | null; // Launched
 
-  @Column()
-  weight: string; // Weight (g)
+  @Column({ nullable: true })
+  dimensions: string | null; // Dimensions (mm)
 
-  @Column()
-  batteryCapacity: string; // Battery capacity (mAh)
+  @Column({ nullable: true })
+  weight: string | null; // Weight (g)
 
-  @Column()
-  removableBattery: string; // Removable battery
+  @Column({ nullable: true })
+  batteryCapacity: string | null; // Battery capacity (mAh)
 
-  @Column()
-  screenSize: string; // Screen size (inches)
+  @Column({ nullable: true })
+  removableBattery: string | null; // Removable battery
 
-  @Column({ default: true })
-  touchscreen: boolean; // Touchscreen
+  @Column({ nullable: true })
+  screenSize: string | null; // Screen size (inches)
 
-  @Column()
-  resolution: string; // Resolution
+  @Column({ nullable: true, default: true })
+  touchscreen: boolean | null; // Touchscreen
 
-  @Column()
-  ppi: string; // Pixels per inch (PPI)
+  @Column({ nullable: true })
+  resolution: string | null; // Resolution
 
-  @Column()
-  processor: string; // Processor
+  @Column({ nullable: true })
+  ppi: string | null; // Pixels per inch (PPI)
 
-  @Column()
-  processorMake: string; // Processor make
+  @Column({ nullable: true })
+  processor: string | null; // Processor
 
-  @Column()
-  ram: string; // RAM
+  @Column({ nullable: true })
+  processorMake: string | null; // Processor make
 
-  @Column()
-  internalStorage: string; // Internal storage
+  @Column({ nullable: true })
+  ram: string | null; // RAM
 
-  @Column()
-  expandableStorage: string; // Expandable storage
+  @Column({ nullable: true })
+  internalStorage: string | null; // Internal storage
 
-  @Column()
-  rearCamera: string; // Rear camera
+  @Column({ nullable: true })
+  expandableStorage: string | null; // Expandable storage
 
-  @Column()
-  rearFlash: string; // Rear Flash
+  @Column({ nullable: true })
+  rearCamera: string | null; // Rear camera
 
-  @Column()
-  frontCamera: string; // Front camera
+  @Column({ nullable: true })
+  rearFlash: string | null; // Rear Flash
 
-  @Column()
-  operatingSystem: string; // Operating system
+  @Column({ nullable: true })
+  frontCamera: string | null; // Front camera
 
-  @Column()
-  wifi: string; // Wi-Fi
+  @Column({ nullable: true })
+  operatingSystem: string | null; // Operating system
 
-  @Column()
-  gps: string; // GPS
+  @Column({ nullable: true })
+  wifi: string | null; // Wi-Fi
 
-  @Column()
-  bluetooth: string; // Bluetooth
+  @Column({ nullable: true })
+  gps: string | null; // GPS
 
-  @Column({ default: false })
-  nfc: boolean; // NFC
+  @Column({ nullable: true })
+  bluetooth: string | null; // Bluetooth
 
-  @Column({ default: false })
-  infrared: boolean; // Infrared
+  @Column({ nullable: true, default: false })
+  nfc: boolean | null; // NFC
 
-  @Column()
-  usbOtg: string; // USB OTG
+  @Column({ nullable: true, default: false })
+  infrared: boolean | null; // Infrared
 
-  @Column()
-  headphones: string; // Headphones
+  @Column({ nullable: true })
+  usbOtg: string | null; // USB OTG
 
-  @Column({ default: false })
-  fm: boolean; // FM
+  @Column({ nullable: true })
+  headphones: string | null; // Headphones
 
-  @Column({ default: false })
-  wifiDirect: boolean; // Wi-Fi Direct
+  @Column({ nullable: true, default: false })
+  fm: boolean | null; // FM
 
-  @Column({ default: false })
-  mhl: boolean; // Mobile High-Definition Link (MHL)
+  @Column({ nullable: true, default: false })
+  wifiDirect: boolean | null; // Wi-Fi Direct
 
-  @Column({ default: false })
-  compassMagnetometer: boolean; // Compass/ Magnetometer
+  @Column({ nullable: true, default: false })
+  mhl: boolean | null; // Mobile High-Definition Link (MHL)
 
-  @Column({ default: false })
-  proximitySensor: boolean; // Proximity sensor
+  @Column({ nullable: true, default: false })
+  compassMagnetometer: boolean | null; // Compass/ Magnetometer
 
-  @Column({ default: false })
-  accelerometer: boolean; // Accelerometer
+  @Column({ nullable: true, default: false })
+  proximitySensor: boolean | null; // Proximity sensor
 
-  @Column({ default: false })
-  ambientLightSensor: boolean; // Ambient light sensor
+  @Column({ nullable: true, default: false })
+  accelerometer: boolean | null; // Accelerometer
 
-  @Column({ default: false })
-  gyroscope: boolean; // Gyroscope
+  @Column({ nullable: true, default: false })
+  ambientLightSensor: boolean | null; // Ambient light sensor
 
-  @Column({ default: false })
-  barometer: boolean; // Barometer
+  @Column({ nullable: true, default: false })
+  gyroscope: boolean | null; // Gyroscope
 
-  @Column({ default: false })
-  temperatureSensor: boolean; // Temperature sensor
+  @Column({ nullable: true, default: false })
+  barometer: boolean | null; // Barometer
 
-  @OneToOne(() => Product, {cascade:true, onDelete:"CASCADE"})
+  @Column({ nullable: true, default: false })
+  temperatureSensor: boolean | null; // Temperature sensor
+
+  @OneToOne(() => Product, { cascade: true, onDelete: "CASCADE" })
   @JoinColumn()
   product: Product;
 }

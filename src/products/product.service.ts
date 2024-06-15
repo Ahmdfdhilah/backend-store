@@ -2,7 +2,6 @@ import { Injectable, Inject, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Product } from '../entities/products-related/product.entity';
-import { ProductInventory } from '../entities/products-related/product-inventory.entity';
 import { ProductReviews } from '../entities/products-related/product-reviews.entity';
 import { Discounts } from '../entities/products-related/discounts.entity';
 import { User } from 'src/entities/users-related/user.entity';
@@ -19,7 +18,6 @@ export class ProductService {
   private readonly logger = new Logger(ProductService.name);
   constructor(
     @InjectRepository(Product) private readonly productRepository: Repository<Product>,
-    @InjectRepository(ProductInventory) private readonly productInventoryRepository: Repository<ProductInventory>,
     @InjectRepository(ProductReviews) private readonly productReviewsRepository: Repository<ProductReviews>,
     @InjectRepository(Discounts) private readonly discountsRepository: Repository<Discounts>,
     @InjectRepository(User) private readonly userRepository: Repository<User>,
@@ -91,15 +89,12 @@ export class ProductService {
     }
 
     if (discounts) {
-      const discountEntities = discounts.map(item => {
-        const discountEntity = new Discounts();
-        discountEntity.discount = item.discount;
-        discountEntity.expires_at = new Date(item.expires_at);
-        discountEntity.product = newProduct;
-        return discountEntity;
-      });
-      await this.discountsRepository.save(discountEntities);
-      newProduct.discounts = discountEntities;
+      const discountEntity = new Discounts();
+      discountEntity.discount = discounts.discount;
+      discountEntity.expires_at = new Date(discounts.expires_at);
+      discountEntity.product = newProduct;
+      await this.discountsRepository.save(discountEntity);
+      newProduct.discounts = discountEntity;
     }
 
     if (smartphoneSpecs) {
@@ -133,7 +128,7 @@ export class ProductService {
   }
 
   async update(id: string, updateProductDto: UpdateProductDto, imgSrc?: string): Promise<Product> {
-    const { name, price, category, color, weight, tabletSpecs, smartphoneSpecs, laptopSpecs } = updateProductDto;
+    const { name, price, category, color, weight, tabletSpecs, smartphoneSpecs, laptopSpecs, discounts } = updateProductDto;
 
     console.log(tabletSpecs, smartphoneSpecs, laptopSpecs);
 
@@ -181,7 +176,14 @@ export class ProductService {
       await this.specsTabletRepository.remove(product.tabletSpecs);
       await this.specsTabletRepository.save(product.tabletSpecs);
     }
-
+    if (discounts) {
+      const discountEntity = new Discounts();
+      discountEntity.discount = discounts.discount;
+      discountEntity.expires_at = new Date(discounts.expires_at);
+      discountEntity.product = product;
+      await this.discountsRepository.save(discountEntity);
+      product.discounts = discountEntity;
+    }
     await this.productRepository.save(product);
 
     return this.productRepository.findOne({
@@ -222,7 +224,6 @@ export class ProductService {
       await this.specsTabletRepository.remove(product.tabletSpecs);
     }
 
-    await this.productInventoryRepository.delete({ product });
     await this.productReviewsRepository.delete({ product });
     await this.discountsRepository.delete({ product });
     await this.productRepository.delete(id);

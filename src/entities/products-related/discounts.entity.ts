@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from 'typeorm';
 import { Product } from './product.entity';
 
 @Entity()
@@ -6,7 +6,7 @@ export class Discounts {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Product, product => product.discounts)
+  @OneToOne(() => Product, product => product.discounts)
   product: Product;
 
   @Column()

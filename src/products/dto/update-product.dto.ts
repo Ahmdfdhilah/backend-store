@@ -137,7 +137,7 @@ export const UpdateProductDtoSchema = z.object({
   color: z.array(z.string()), 
   inventory: z.number().optional(),
   reviews: z.array(UpdateReviewDtoSchema).optional(),
-  discounts: z.array(UpdateDiscountDtoSchema).optional(),
+  discounts: UpdateDiscountDtoSchema.optional(),
   category: z.string().optional(),
   smartphoneSpecs: UpdateSpecsSmartphoneDtoSchema.optional(),
   laptopSpecs: UpdateSpecsLaptopDtoSchema.optional(),

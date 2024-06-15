@@ -5,6 +5,7 @@ export const CreateProductReviewDtoSchema = z.object({
   comment: z.string(),
   productId: z.string().uuid(),
   userId: z.string().uuid(),
+  orderItemId : z.string().uuid(),
 });
 
 export type CreateProductReviewDto = z.infer<typeof CreateProductReviewDtoSchema>;

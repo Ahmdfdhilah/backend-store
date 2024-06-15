@@ -35,6 +35,7 @@ export class ProductController {
       },
     }),
   }))
+  
   async create(
     @Body() createProductDto: CreateProductDto,
     @UploadedFile() file,) {

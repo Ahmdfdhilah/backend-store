@@ -134,7 +134,7 @@ export const CreateProductDtoSchema = z.object({
   color: z.array(z.string()), 
   inventory: z.number(),
   reviews: z.array(CreateReviewDtoSchema),
-  discounts: z.array(CreateDiscountDtoSchema),
+  discounts: CreateDiscountDtoSchema.optional(),
   smartphoneSpecs: CreateSpecsSmartphoneDtoSchema.optional(),
   laptopSpecs: CreateSpecsLaptopDtoSchema.optional(),
   tabletSpecs: CreateSpecsTabletDtoSchema.optional(),
