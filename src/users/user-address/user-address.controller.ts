@@ -17,7 +17,7 @@ export class UserAddressController {
     return await this.userAddressService.create(userId, createUserAddressDto);
   }
 
-  @Put(':userDd')
+  @Put(':userId')
   async updateById(@Param('userId') userId: string, @Body() updateUserAddressDto: UpdateUserAddressDto) {
     return await this.userAddressService.update(userId, updateUserAddressDto);
   }

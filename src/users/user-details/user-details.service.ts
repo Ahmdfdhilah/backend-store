@@ -44,7 +44,8 @@ export class UserDetailsService {
     if (!userDetails) {
       throw new NotFoundException(`UserDetails for User ID ${userId} not found`);
     }
-
+    console.log(imgSrc);
+    
     userDetails = {
       ...userDetails,
       ...updateUserDetailsDto,
