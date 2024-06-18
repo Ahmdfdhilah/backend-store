@@ -44,7 +44,7 @@ import { UserAddressModule } from './users/user-address/user-address.module';
       database: process.env.DB_NAME,
       password: process.env.DB_PASSWORD,
       entities: [User, Product, Order, OrderItem, UserAddress,  Discounts, OrderStatusHistory, Payments, ProductReviews, ShippingDetails, UserDetails, SpecsLaptop, SpecsSmartphone, SpecsTablet],
-      synchronize: false,
+      synchronize: true,
     }),
     CacheModule.register({
       isGlobal:true,
