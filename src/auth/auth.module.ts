@@ -12,8 +12,8 @@ import { LocalGuard } from './guards/local.guard';
   imports: [
     UserModule, 
     JwtModule.register({
-      secret: 'fadil',
-      signOptions: { expiresIn: '1h' },
+      secret: 'jwttoken',
+      signOptions: { expiresIn: '1h'},
     }),
   ],
   controllers: [AuthController],
