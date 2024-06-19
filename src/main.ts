@@ -3,7 +3,7 @@ import { AppModule } from './app.module';
 import helmet from 'helmet';
 import { ThrottlerExceptionFilter } from './security/throttler-exception.filter';
 import {NestExpressApplication} from "@nestjs/platform-express";
-const port = process.env.PORT || 3000;
+
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -17,6 +17,6 @@ async function bootstrap() {
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });
-  await app.listen(port);
+  await app.listen(3000);
 }
 bootstrap();

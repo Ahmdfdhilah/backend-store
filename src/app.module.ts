@@ -28,7 +28,6 @@ import { RateLimiterMiddleware } from './security/rate-limiter.middleware';
 import { APP_GUARD } from '@nestjs/core';
 import { UserDetailsModule } from './users/user-details/user-details.module';
 import { UserAddressModule } from './users/user-address/user-address.module';
-import { redisStore } from 'cache-manager-redis-yet';
 
 @Module({
   imports: [
@@ -44,16 +43,12 @@ import { redisStore } from 'cache-manager-redis-yet';
       username: process.env.DB_USERNAME,
       database: process.env.DB_NAME,
       password: process.env.DB_PASSWORD,
-      entities: [User, Product, Order, OrderItem, UserAddress,  Discounts, OrderStatusHistory, Payments, ProductReviews, ShippingDetails, UserDetails, SpecsLaptop, SpecsSmartphone, SpecsTablet],
-      synchronize: false,
+      entities: [User, Product, Order, OrderItem, UserAddress, Discounts, OrderStatusHistory, Payments, ProductReviews, ShippingDetails, UserDetails, SpecsLaptop, SpecsSmartphone, SpecsTablet],
+      synchronize: true,
     }),
     CacheModule.register({
-      isGlobal:true,
+      isGlobal: true,
       ttl: 300,
-      host: process.env.REDIS_HOST,
-      port: parseInt(process.env.REDIS_PORT, 10) || 6379,
-      password: process.env.REDIS_PASSWORD,
-      store: redisStore
     }),
     TypeOrmModule.forFeature([User, Product, Order, OrderItem, UserAddress, Discounts, OrderStatusHistory, Payments, ProductReviews, ShippingDetails, UserDetails, SpecsLaptop, SpecsSmartphone, SpecsTablet]),
     SeederModule,
@@ -82,6 +77,6 @@ export class AppModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(RateLimiterMiddleware)
-      .forRoutes('auth/login'); 
+      .forRoutes('auth/login');
   }
 }

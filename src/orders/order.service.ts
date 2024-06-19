@@ -343,26 +343,28 @@ export class OrderService {
       where: { id: orderId },
       relations: ['statusHistory'],
     });
-
+  
     if (!order) {
       throw new NotFoundException(`Order with ID ${orderId} not found`);
     }
-
+  
     const url = `https://api.sandbox.midtrans.com/v2/${orderId}/status`;
     const headers = {
       'Content-Type': 'application/json',
       'Authorization': `Basic ${Buffer.from(process.env.MIDTRANS_SERVER_KEY).toString('base64')}`,
     };
-
+  
     try {
       const response = await axios.get(url, { headers });
       const midtransStatus = response.data.transaction_status;
-
-      console.log(response.data);
-
-      // Get the latest status history entry
-      const latestStatus = order.statusHistory.slice(-1)[0];
-
+  
+      const latestStatus = order.statusHistory.length > 0 ? order.statusHistory.slice(-1)[0] : null;
+      console.log("Midtrans status: ", midtransStatus);
+      if (latestStatus) {
+        console.log("Latest status: ", latestStatus.transaction_status);
+      } else {
+        console.log("No status history found for this order");
+      }
       if (!latestStatus || latestStatus.transaction_status !== midtransStatus) {
         const orderStatusHistory = new OrderStatusHistory();
         orderStatusHistory.transaction_id = response.data.transaction_id;
@@ -379,20 +381,23 @@ export class OrderService {
         orderStatusHistory.transaction_time = response.data.transaction_time;
         orderStatusHistory.settlement_time = response.data.settlement_time;
         orderStatusHistory.expiry_time = response.data.expiry_time;
-
+  
+        console.log("Saving new status history: ", orderStatusHistory);
+  
         await this.orderStatusHistoryRepository.save(orderStatusHistory);
         order.statusHistory.push(orderStatusHistory);
-
+  
         await this.orderRepository.save(order);
+  
+        console.log("Order status updated successfully");
       }
-
       return order;
     } catch (error) {
       this.logger.error('Error updating order status from Midtrans:', error);
       throw new Error('Failed to update order status from Midtrans');
     }
   }
-
+  
   async getProvince(): Promise<any> {
     const url = `https://api.rajaongkir.com/starter/province/`;
     const headers = {
