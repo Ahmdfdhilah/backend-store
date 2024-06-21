@@ -16,6 +16,7 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import midtransClient from 'midtrans-client';
 import axios
   from 'axios';
+
 @Injectable()
 export class OrderService {
   private readonly logger = new Logger(OrderService.name);
@@ -30,13 +31,16 @@ export class OrderService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     @InjectRepository(Product) private readonly productRepository: Repository<Product>,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
-  ) {
+  )
+   {
     this.snap = new midtransClient.Snap({
       isProduction: false,
       serverKey: process.env.MIDTRANS_SERVER_KEY,
       clientKey: process.env.MIDTRANS_CLIENT_KEY,
     });
   }
+  
+  private readonly apiKey = process.env.RAJAONGKIR_KEY
 
   async findAll(): Promise<Order[]> {
     const cacheKey = 'orders';
@@ -74,30 +78,35 @@ export class OrderService {
 
   async create(createOrderDto: CreateOrderDto): Promise<any> {
     const { userId, items, statusHistory, shippingDetails, shippingCost } = createOrderDto;
-
-    // Find the user
+  
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
       throw new NotFoundException('User not found');
     }
-
-    // Create a new Order instance
+  
     const order = new Order();
     order.user = user;
     order.items = [];
     order.statusHistory = [];
     order.shippingDetails = null;
     order.total = 0;
-
-    // Save the initial order
+  
     const savedOrder = await this.orderRepository.save(order);
-
-    // Process order items
     const orderItems = await Promise.all(items.map(async item => {
-      const product = await this.productRepository.findOne({ where: { id: item.productId } });
+      const product = await this.productRepository.findOne({
+        where: { id: item.productId },
+        relations: ['discounts']
+      });
       if (!product) {
         throw new NotFoundException(`Product not found: ${item.productId}`);
       }
+      const now = new Date();
+      let productPrice = product.price;
+      if (product.discounts && (!product.discounts.expires_at || product.discounts.expires_at > now)) {
+        const { discount } = product.discounts;
+        productPrice = productPrice - (productPrice * discount / 100);
+      }
+  
       const orderItem = this.orderItemRepository.create({
         product,
         quantity: item.quantity,
@@ -106,15 +115,17 @@ export class OrderService {
       });
       return await this.orderItemRepository.save(orderItem);
     }));
-
-    // Update order with items
     savedOrder.items = orderItems;
-
-    // Calculate total including shipping cost
-    const total = orderItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0) + shippingCost;
+  
+    const total = orderItems.reduce((sum, item) => {
+      const productPrice = item.product.discounts
+        ? item.product.price - (item.product.price * item.product.discounts.discount / 100)
+        : item.product.price;
+      return sum + productPrice * item.quantity;
+    }, 0) + shippingCost;
+    
     savedOrder.total = total;
-
-    // Create and save order status histories
+  
     const orderStatusHistories = statusHistory.map(status => {
       const orderStatus = this.orderStatusHistoryRepository.create({
         updated_at: new Date(),
@@ -123,9 +134,9 @@ export class OrderService {
         currency: status.currency || undefined,
         payment_type: status.payment_type || undefined,
         signature_key: status.signature_key || undefined,
-        transaction_status: status.transaction_status || undefined,
+        transaction_status: "pending",
         fraud_status: status.fraud_status || undefined,
-        status_message: status.status_message || undefined,
+        status_message: "pending",
         merchant_id: status.merchant_id || undefined,
         va_numbers: status.va_numbers || undefined,
         payment_amounts: status.payment_amounts || undefined,
@@ -136,10 +147,10 @@ export class OrderService {
       });
       return orderStatus;
     });
-
+  
     await this.orderStatusHistoryRepository.save(orderStatusHistories);
     savedOrder.statusHistory = orderStatusHistories;
-
+  
     const orderShippingDetails = this.shippingDetailsRepository.create({
       address: shippingDetails.address,
       city: shippingDetails.city,
@@ -148,26 +159,22 @@ export class OrderService {
       shippingCost: shippingCost,
       order: savedOrder
     });
-
+  
     await this.shippingDetailsRepository.save(orderShippingDetails);
     savedOrder.shippingDetails = orderShippingDetails;
-
-    // Save updated order with all associations
+  
     await this.orderRepository.save(savedOrder);
-
-    // Create and save payment information
     const orderPayments = this.paymentsRepository.create({
       amount: total,
       status: 'pending',
       paid_at: new Date(),
       order: savedOrder
     });
-
+  
     await this.paymentsRepository.save(orderPayments);
     savedOrder.payments = [orderPayments];
-
+  
     try {
-      // Prepare transaction payload for Midtrans
       const transactionPayload = {
         transaction_details: {
           order_id: savedOrder.id,
@@ -195,27 +202,28 @@ export class OrderService {
             quantity: 1,
             name: "Biaya Pengiriman"
           },
-          ...orderItems.map(item => ({
-            id: item.product.id,
-            price: item.product.price,
-            quantity: item.quantity,
-            name: item.product.name,
-          }))
+          ...orderItems.map(item => {
+            const productPrice = item.product.discounts
+              ? item.product.price - (item.product.price * item.product.discounts.discount / 100)
+              : item.product.price;
+            return {
+              id: item.product.id,
+              price: productPrice,
+              quantity: item.quantity,
+              name: item.product.name,
+            };
+          })
         ]
       };
-
-      // Create transaction with Midtrans
+  
       const transaction = await this.snap.createTransaction(transactionPayload);
       savedOrder.snapToken = transaction.token;
       await this.orderRepository.save(savedOrder);
       orderPayments.link_payment = transaction.redirect_url;
       await this.paymentsRepository.save(orderPayments);
-
-      // Clear cache
+  
       await this.cacheManager.del('orders');
       this.logger.log('Cleared allOrders cache');
-
-      // Return order details and payment URL
       return {
         order: await this.orderRepository.findOne({
           where: { id: savedOrder.id },
@@ -229,7 +237,7 @@ export class OrderService {
       throw new Error('Midtrans transaction creation failed');
     }
   }
-
+  
   async update(id: string, updateOrderDto: UpdateOrderDto): Promise<Order> {
     const { userId, items, statusHistory, shippingDetails } = updateOrderDto;
 
@@ -365,7 +373,7 @@ export class OrderService {
       } else {
         console.log("No status history found for this order");
       }
-      if (!latestStatus || latestStatus.transaction_status !== midtransStatus) {
+      if (!latestStatus || latestStatus.transaction_status !== midtransStatus && response.data.status_message !== "Transaction doesn't exist.") {
         const orderStatusHistory = new OrderStatusHistory();
         orderStatusHistory.transaction_id = response.data.transaction_id;
         orderStatusHistory.gross_amount = response.data.gross_amount;
@@ -383,7 +391,6 @@ export class OrderService {
         orderStatusHistory.expiry_time = response.data.expiry_time;
   
         console.log("Saving new status history: ", orderStatusHistory);
-  
         await this.orderStatusHistoryRepository.save(orderStatusHistory);
         order.statusHistory.push(orderStatusHistory);
   
@@ -399,65 +406,105 @@ export class OrderService {
   }
   
   async getProvince(): Promise<any> {
+    const cacheKey = 'province';
+    const cachedProvinces = await this.cacheManager.get(cacheKey);
+
+    if (cachedProvinces) {
+      return cachedProvinces;
+    }
+
     const url = `https://api.rajaongkir.com/starter/province/`;
     const headers = {
-      key: '1306e862fb71c2c95e6f40cb6400cbb4',
-    }
+      key: this.apiKey,
+    };
+
     try {
-      const response = await axios.get(url, { headers })
-      return response.data.rajaongkir.results;
-    }
-    catch (error) {
-      throw new Error('failed to get province')
+      const response = await axios.get(url, { headers });
+      const provinces = response.data.rajaongkir.results;
+
+      await this.cacheManager.set(cacheKey, provinces, 3600); 
+      return provinces;
+    } catch (error) {
+      throw new Error('Failed to get province');
     }
   }
 
   async getProvinceById(id: string): Promise<any> {
+    const cacheKey = `province_${id}`;
+    const cachedProvince = await this.cacheManager.get(cacheKey);
+
+    if (cachedProvince) {
+      return cachedProvince;
+    }
+
     const url = `https://api.rajaongkir.com/starter/province?id=${id}`;
     const headers = {
-      key: '1306e862fb71c2c95e6f40cb6400cbb4',
-    }
+      key: this.apiKey,
+    };
+
     try {
-      const response = await axios.get(url, { headers })
-      return response.data.rajaongkir.results;
-    }
-    catch (error) {
-      throw new Error('failed to get province')
+      const response = await axios.get(url, { headers });
+      const province = response.data.rajaongkir.results;
+
+      await this.cacheManager.set(cacheKey, province,3600); 
+      return province;
+    } catch (error) {
+      throw new Error('Failed to get province');
     }
   }
 
   async getCity(): Promise<any> {
+    const cacheKey = 'city';
+    const cachedCities = await this.cacheManager.get(cacheKey);
+
+    if (cachedCities) {
+      return cachedCities;
+    }
+
     const url = `https://api.rajaongkir.com/starter/city/`;
     const headers = {
-      key: '1306e862fb71c2c95e6f40cb6400cbb4',
-    }
+      key: this.apiKey,
+    };
+
     try {
-      const response = await axios.get(url, { headers })
-      return response.data.rajaongkir.results;
-    }
-    catch (error) {
-      throw new Error('failed to get province')
+      const response = await axios.get(url, { headers });
+      const cities = response.data.rajaongkir.results;
+
+      await this.cacheManager.set(cacheKey, cities, 3600); 
+      return cities;
+    } catch (error) {
+      throw new Error('Failed to get city');
     }
   }
 
   async getCityById(id: string): Promise<any> {
+    const cacheKey = `city_${id}`;
+    const cachedCity = await this.cacheManager.get(cacheKey);
+
+    if (cachedCity) {
+      return cachedCity;
+    }
+
     const url = `https://api.rajaongkir.com/starter/city?id=${id}`;
     const headers = {
-      key: '1306e862fb71c2c95e6f40cb6400cbb4',
-    }
+      key: this.apiKey
+    };
+
     try {
-      const response = await axios.get(url, { headers })
-      return response.data.rajaongkir.results;
-    }
-    catch (error) {
-      throw new Error('failed to get province')
+      const response = await axios.get(url, { headers });
+      const city = response.data.rajaongkir.results;
+
+      await this.cacheManager.set(cacheKey, city, 3600);
+      return city;
+    } catch (error) {
+      throw new Error('Failed to get city');
     }
   }
   async getPrice(createPriceShipping: CreatePriceShippingDto): Promise<any> {
     const { origin, destination, weight, courier } = createPriceShipping;
     const url = `https://api.rajaongkir.com/starter/cost`;
     const headers = {
-      key: '1306e862fb71c2c95e6f40cb6400cbb4',
+      key: this.apiKey,
       'Content-Type': 'application/x-www-form-urlencoded',
     };
     const data = {
