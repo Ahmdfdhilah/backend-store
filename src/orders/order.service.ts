@@ -39,7 +39,7 @@ export class OrderService {
       clientKey: process.env.MIDTRANS_CLIENT_KEY,
     });
   }
-  
+
   private readonly apiKey = process.env.RAJAONGKIR_KEY
 
   async findAll(): Promise<Order[]> {
@@ -51,7 +51,7 @@ export class OrderService {
     }
 
     const orders = await this.orderRepository.find({
-      relations: ['items', 'items.product', 'items.productReviews', 'statusHistory', 'shippingDetails', 'payments'],
+      relations: ['items', 'items.product', 'items.product.discounts','items.productReviews', 'statusHistory', 'shippingDetails', 'payments'],
     });
     await this.cacheManager.set(cacheKey, classToPlain(orders), 1000000);
     return orders;
@@ -67,7 +67,7 @@ export class OrderService {
 
     const order = await this.orderRepository.findOne({
       where: { id },
-      relations: ['items', 'items.product', 'user', 'statusHistory', 'shippingDetails', 'payments', 'items.productReviews'],
+      relations: ['items', 'items.product','items.product.discounts', 'user', 'statusHistory', 'shippingDetails', 'payments', 'items.productReviews'],
     });
     if (!order) {
       throw new NotFoundException(`Order with ID ${id} not found`);
@@ -97,6 +97,8 @@ export class OrderService {
         where: { id: item.productId },
         relations: ['discounts']
       });
+      console.log(product);
+      
       if (!product) {
         throw new NotFoundException(`Product not found: ${item.productId}`);
       }
@@ -227,7 +229,7 @@ export class OrderService {
       return {
         order: await this.orderRepository.findOne({
           where: { id: savedOrder.id },
-          relations: ['items', 'items.product', 'statusHistory', 'shippingDetails', 'payments'],
+          relations: ['items', 'items.product', 'items.product.discounts', 'statusHistory', 'shippingDetails', 'payments'],
         }),
         paymentUrl: transaction.redirect_url,
         payload: transactionPayload
