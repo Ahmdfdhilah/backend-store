@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, UploadedFile, UseInterceptors, UseGuards } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -6,6 +6,9 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import * as fs from 'fs';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 
 @Controller('products')
 export class ProductController {
@@ -21,6 +24,9 @@ export class ProductController {
     return this.productService.findOne(id);
   }
 
+  
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
   @Post()
   @UseInterceptors(FileInterceptor('file', {
     storage: diskStorage({
@@ -36,6 +42,8 @@ export class ProductController {
     }),
   }))
   
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
   async create(
     @Body() createProductDto: CreateProductDto,
     @UploadedFile() file,) {
@@ -43,6 +51,9 @@ export class ProductController {
 
     return await this.productService.create(createProductDto, imageUrl);
   }
+  
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
   @Put(':id')
   @UseInterceptors(FileInterceptor('file', {
     storage: diskStorage({
@@ -69,6 +80,9 @@ export class ProductController {
     return this.productService.update(id, updateProductDto, imageUrl);
   }
 
+  
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.productService.remove(id);

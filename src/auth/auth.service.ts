@@ -23,11 +23,12 @@ export class AuthService {
   }
 
   getUserIdFromToken(token: string): string {
-    console.log(token);
     const decodedToken = this.decodeToken(token);
-    console.log(decodedToken);
-    
     return decodedToken?.sub;
+  }
+  async getUserRole(userId: string): Promise<string> {
+    const user = await this.userService.findOne(userId);
+    return user.userRole;
   }
 
   async validateUser({ username, password }: AuthPayloadDto): Promise<any> {

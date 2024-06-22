@@ -33,7 +33,7 @@ export class SeederService {
 
   private async seedUsers() {
     const users = [
-      { username: 'ahmdfdhilah', email: 'test@example.com', password: 'password', userRole: "user", imgSrc: '/img/user/example.jpg' },
+      { username: 'ahmdfdhilah', email: 'test@example.com', password: 'password', userRole: "admin", imgSrc: '/img/user/example.jpg' },
     ];
 
     for (const user of users) {

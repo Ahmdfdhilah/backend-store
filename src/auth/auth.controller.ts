@@ -2,6 +2,8 @@ import { Body, Controller, Get, Param, Post, Put, Req,  UnauthorizedException,  
 import { AuthService } from './auth.service';
 import { LocalGuard } from './guards/local.guard';
 import { JwtAuthGuard } from './guards/jwt.guard';
+import { RolesGuard } from './guards/roles.guard';
+import { Roles } from './decorators/roles.decorator';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { UpdateUserDto } from 'src/users/dto/update-user.dto';
 
@@ -27,7 +29,8 @@ export class AuthController {
     return { accessToken: this.authService.getJwtToken(user) };
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
   @Put(':id')
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.authService.updateUser(id, updateUserDto) ;

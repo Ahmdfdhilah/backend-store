@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductService } from './product.service';
 import { ProductController } from './product.controller';
@@ -10,6 +10,8 @@ import { User } from 'src/entities/users-related/user.entity';
 import { SpecsLaptop } from 'src/entities/products-related/specs/specs-laptop.entity';
 import { SpecsSmartphone } from 'src/entities/products-related/specs/specs-smartphone.entity';
 import { SpecsTablet } from 'src/entities/products-related/specs/specs-tablet.entity';
+import { UserModule } from 'src/users/user.module';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
   imports: [
@@ -22,7 +24,8 @@ import { SpecsTablet } from 'src/entities/products-related/specs/specs-tablet.en
       SpecsTablet,
       Discounts,
       User
-    ])
+    ]),
+    forwardRef(() => AuthModule), 
   ],
   controllers: [ProductController],
   providers: [ProductService],
