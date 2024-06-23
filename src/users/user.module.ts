@@ -15,7 +15,7 @@ import { AuthModule } from 'src/auth/auth.module';
       UserDetails,
       UserAddress,
       ProductReviews
-    ]), 
+    ]),
     forwardRef(() => AuthModule) 
   ],
   providers: [UserService],

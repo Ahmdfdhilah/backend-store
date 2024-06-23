@@ -168,8 +168,6 @@ export class OrderService {
     await this.orderRepository.save(savedOrder);
     const orderPayments = this.paymentsRepository.create({
       amount: total,
-      status: 'pending',
-      paid_at: new Date(),
       order: savedOrder
     });
   

@@ -7,6 +7,7 @@ import { JwtStrategy } from './strategy/jwt.strategy';
 import { LocalStrategy } from './strategy/local.strategy';
 import { JwtAuthGuard } from './guards/jwt.guard';
 import { LocalGuard } from './guards/local.guard';
+import { RolesGuard } from './guards/roles.guard';
 
 @Module({
   imports: [
@@ -15,9 +16,10 @@ import { LocalGuard } from './guards/local.guard';
       secret: 'jwttoken',
       signOptions: { expiresIn: '1h' },
     }),
+
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, LocalStrategy, JwtAuthGuard, LocalGuard],
+  providers: [AuthService, JwtStrategy, LocalStrategy, JwtAuthGuard, LocalGuard, RolesGuard],
   exports: [AuthService],
 })
 export class AuthModule {}

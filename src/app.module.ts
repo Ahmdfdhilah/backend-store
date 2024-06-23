@@ -33,7 +33,7 @@ import { UserAddressModule } from './users/user-address/user-address.module';
   imports: [
     ConfigModule.forRoot(),
     ThrottlerModule.forRoot([{
-      ttl: 60,
+      ttl: 10,
       limit: 10,
     }]),
     TypeOrmModule.forRoot({
@@ -44,7 +44,7 @@ import { UserAddressModule } from './users/user-address/user-address.module';
       database: process.env.DB_NAME,
       password: process.env.DB_PASSWORD,
       entities: [User, Product, Order, OrderItem, UserAddress, Discounts, OrderStatusHistory, Payments, ProductReviews, ShippingDetails, UserDetails, SpecsLaptop, SpecsSmartphone, SpecsTablet],
-      synchronize: true,
+      synchronize: false
     }),
     CacheModule.register({
       isGlobal: true,
@@ -72,7 +72,7 @@ import { UserAddressModule } from './users/user-address/user-address.module';
 })
 export class AppModule {
   constructor(private readonly seederService: SeederService) {
-    this.seederService.seed();
+    // this.seederService.seed();
   }
   configure(consumer: MiddlewareConsumer) {
     consumer

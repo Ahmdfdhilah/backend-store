@@ -15,14 +15,22 @@ export class RolesGuard extends JwtAuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const roles = this.reflector.get<string[]>('roles', context.getHandler());
     if (!roles) {
-      return true;
+      return true; 
     }
 
     const request = context.switchToHttp().getRequest();
     const user = request.user;
 
-    const userRole = await this.authService.getUserRole(user.userId);
-
-    return roles.includes(userRole);
+    try {
+      const userRole = await this.authService.getUserRole(user.userId);
+      if (!roles.includes(userRole)) {
+        console.error(`User with role '${userRole}' is not authorized to access this resource.`);
+        return false;
+      }
+      return true; 
+    } catch (error) {
+      console.error(`Error checking roles: ${error.message}`);
+      return false; 
+    }
   }
 }

@@ -27,10 +27,14 @@ export class AuthService {
     return decodedToken?.sub;
   }
   async getUserRole(userId: string): Promise<string> {
-    const user = await this.userService.findOne(userId);
-    return user.userRole;
-  }
-
+    try {
+      const user = await this.userService.findOne(userId);
+      return user.userRole;
+    } catch (error) {
+      console.error('Error fetching user role:', error);
+      throw new UnauthorizedException('Failed to fetch user role');
+    }
+  }  
   async validateUser({ username, password }: AuthPayloadDto): Promise<any> {
     const user = await this.userService.findByUsername(username);
     if (!user) {

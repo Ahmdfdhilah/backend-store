@@ -40,10 +40,7 @@ export const CreateShippingDetailsDtoSchema = z.object({
 });
 
 export const CreatePaymentsDtoSchema = z.object({
-  amount: z.number(),         
-  method: z.string(),         
-  status: z.string(),         
-  paid_at: z.date(),        
+  amount: z.number(),               
 });
 
 export const CreatePriceShippingDtoSchema = z.object({

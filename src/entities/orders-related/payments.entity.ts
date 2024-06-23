@@ -13,14 +13,6 @@ export class Payments {
   amount: number;
 
   @Column({ nullable: true })
-  method: string;
-
-  @Column({ nullable: true })
-  status: string;
-
-  @Column({ nullable: true })
   link_payment: string;
 
-  @Column({ nullable: true })
-  paid_at: Date;
 }
