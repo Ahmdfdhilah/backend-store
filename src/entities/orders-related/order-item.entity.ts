@@ -13,7 +13,7 @@ export class OrderItem {
   @Exclude()
   order: Order;
 
-  @ManyToOne(() => Product, { eager: true })
+  @ManyToOne(() => Product, { eager: true, nullable: true })
   product: Product;
 
   @OneToOne(() => ProductReviews, { nullable: true, onDelete: 'CASCADE' })

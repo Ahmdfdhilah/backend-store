@@ -12,6 +12,7 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { OrderItem } from 'src/entities/orders-related/order-item.entity';
 
 @Injectable()
 export class ProductService {
@@ -23,6 +24,7 @@ export class ProductService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     @InjectRepository(SpecsSmartphone) private readonly specsSmartphoneRepository: Repository<SpecsSmartphone>,
     @InjectRepository(SpecsLaptop) private readonly specsLaptopRepository: Repository<SpecsLaptop>,
+    @InjectRepository(OrderItem) private readonly orderItemsRepository: Repository<OrderItem>,
     @InjectRepository(SpecsTablet) private readonly specsTabletRepository: Repository<SpecsTablet>,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) { }
@@ -194,39 +196,52 @@ export class ProductService {
 
   async remove(id: string): Promise<void> {
     const product = await this.productRepository.findOne({
-      where: { id },
-      relations: ['reviews', 'discounts', 'laptopSpecs', 'smartphoneSpecs', 'tabletSpecs'],
+        where: { id },
+        relations: ['laptopSpecs', 'smartphoneSpecs', 'tabletSpecs', 'reviews', 'discounts', 'orderItems'],
     });
     if (!product) {
-      throw new NotFoundException(`Product with ID ${id} not found`);
+        throw new NotFoundException(`Product with ID ${id} not found`);
     }
 
     if (product.smartphoneSpecs) {
-      product.smartphoneSpecs.product = null;
-      await this.specsSmartphoneRepository.save(product.smartphoneSpecs);
+        product.smartphoneSpecs.product = null;
+        await this.specsSmartphoneRepository.save(product.smartphoneSpecs);
     }
     if (product.laptopSpecs) {
-      product.laptopSpecs.product = null;
-      await this.specsLaptopRepository.save(product.laptopSpecs);
+        product.laptopSpecs.product = null;
+        await this.specsLaptopRepository.save(product.laptopSpecs);
     }
     if (product.tabletSpecs) {
-      product.tabletSpecs.product = null;
-      await this.specsTabletRepository.save(product.tabletSpecs);
+        product.tabletSpecs.product = null;
+        await this.specsTabletRepository.save(product.tabletSpecs);
     }
 
     if (product.smartphoneSpecs) {
-      await this.specsSmartphoneRepository.remove(product.smartphoneSpecs);
+        await this.specsSmartphoneRepository.remove(product.smartphoneSpecs);
     }
     if (product.laptopSpecs) {
-      await this.specsLaptopRepository.remove(product.laptopSpecs);
+        await this.specsLaptopRepository.remove(product.laptopSpecs);
     }
     if (product.tabletSpecs) {
-      await this.specsTabletRepository.remove(product.tabletSpecs);
+        await this.specsTabletRepository.remove(product.tabletSpecs);
     }
+    if (product.discounts) {
+        const discounts = await this.discountsRepository.findOne({ where: { id: product.discounts.id } });
+        if (discounts) {
+            console.log("masukkk");
+            await this.discountsRepository.delete({ id: discounts.id });
+        }
+    }
+
+    if (product.orderItems && product.orderItems.length > 0) {
+      for (const orderItem of product.orderItems) {
+          orderItem.product = null;
+          await this.orderItemsRepository.save(orderItem);
+      }
+  }
 
     await this.productReviewsRepository.delete({ product });
-    await this.discountsRepository.delete({ product });
     await this.productRepository.delete(id);
-  }
+}
 
 }

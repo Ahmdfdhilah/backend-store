@@ -32,13 +32,13 @@ export class Product {
   @OneToMany(() => OrderItem, orderItem => orderItem.product, {cascade: true, nullable:true})
   orderItems: OrderItem[];
 
-  @OneToMany(() => ProductReviews, productReviews => productReviews.product, {cascade: true, nullable:true})
+  @OneToMany(() => ProductReviews, productReviews => productReviews.product, {cascade: true, onDelete: "CASCADE", nullable:true})
   reviews: ProductReviews[];
 
   @Column()
   inventory: number;
 
-  @OneToOne(() => Discounts, discounts => discounts.product, {cascade: true, nullable:true})
+  @OneToOne(() => Discounts, discounts => discounts.product, {cascade: true, nullable:true, onDelete:"CASCADE"})
   @JoinColumn()
   discounts: Discounts;
 
